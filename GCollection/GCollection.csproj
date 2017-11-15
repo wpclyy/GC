@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>GCollection</RootNamespace>
+    <AssemblyName>GCollection</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\..\app_git\dscapi\bin\Debug\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DscOpertion.cs" />
+    <Compile Include="dsc\goods\Attribute.cs" />
+    <Compile Include="dsc\goods\AttributeList.cs" />
+    <Compile Include="dsc\goods\Attributeupdate.cs" />
+    <Compile Include="dsc\goods\attr\list\gdwgoodsattrlit.cs" />
+    <Compile Include="dsc\goods\Goods.cs" />
+    <Compile Include="dsc\goods\GoodsAttr.cs" />
+    <Compile Include="dsc\goods\GoodsType.cs" />
+    <Compile Include="dsc\goods\Goodupdate.cs" />
+    <Compile Include="dsc\goods\Image.cs" />
+    <Compile Include="dsc\goods\Products.cs" />
+    <Compile Include="dsc\goods\SpecInfo.cs" />
+    <Compile Include="FormBatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormBatch.Designer.cs">
+      <DependentUpon>FormBatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DataPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DataPage.Designer.cs">
+      <DependentUpon>DataPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormLoad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLoad.Designer.cs">
+      <DependentUpon>FormLoad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormProductPrice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormProductPrice.Designer.cs">
+      <DependentUpon>FormProductPrice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormQuery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormQuery.Designer.cs">
+      <DependentUpon>FormQuery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormRefresh.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormRefresh.Designer.cs">
+      <DependentUpon>FormRefresh.cs</DependentUpon>
+    </Compile>
+    <Compile Include="gdsdk\AbstractRequest.cs" />
+    <Compile Include="gdsdk\APIFacade.cs" />
+    <Compile Include="gdsdk\APIId.cs" />
+    <Compile Include="gdsdk\DeHtml.cs" />
+    <Compile Include="gdsdk\DeserialSpec.cs" />
+    <Compile Include="gdsdk\entity\Attribute.cs" />
+    <Compile Include="gdsdk\entity\AuthorizationToken.cs" />
+    <Compile Include="gdsdk\entity\ErrorExceptionDesc.cs" />
+    <Compile Include="gdsdk\entity\GetTokenRequest.cs" />
+    <Compile Include="gdsdk\entity\RefreshTokenRequest.cs" />
+    <Compile Include="gdsdk\entity\ResponseStatus.cs" />
+    <Compile Include="gdsdk\entity\ResponseWrapper.cs" />
+    <Compile Include="gdsdk\exception\OceanException.cs" />
+    <Compile Include="gdsdk\GoodRequest.cs" />
+    <Compile Include="gdsdk\HttpClientClass.cs" />
+    <Compile Include="gdsdk\http\HttpClient.cs" />
+    <Compile Include="gdsdk\policy\ClientPolicy.cs" />
+    <Compile Include="gdsdk\policy\GrantType.cs" />
+    <Compile Include="gdsdk\policy\Protocol.cs" />
+    <Compile Include="gdsdk\policy\RequestPolicy.cs" />
+    <Compile Include="gdsdk\primitive\NullableBool.cs" />
+    <Compile Include="gdsdk\primitive\NullableByte.cs" />
+    <Compile Include="gdsdk\primitive\NullableChar.cs" />
+    <Compile Include="gdsdk\primitive\NullableDateTime.cs" />
+    <Compile Include="gdsdk\primitive\NullableDouble.cs" />
+    <Compile Include="gdsdk\primitive\NullableFloat.cs" />
+    <Compile Include="gdsdk\primitive\NullableInt.cs" />
+    <Compile Include="gdsdk\primitive\NullableLong.cs" />
+    <Compile Include="gdsdk\primitive\NullablePrimitiveObject.cs" />
+    <Compile Include="gdsdk\Request.cs" />
+    <Compile Include="gdsdk\Response.cs" />
+    <Compile Include="gdsdk\serialize\DeSerializer.cs" />
+    <Compile Include="gdsdk\serialize\Json2Deserializer.cs" />
+    <Compile Include="gdsdk\serialize\Param2RequestSerializer.cs" />
+    <Compile Include="gdsdk\serialize\Serializer.cs" />
+    <Compile Include="gdsdk\serialize\SerializerProvider.cs" />
+    <Compile Include="gdsdk\SyncAPIClient.cs" />
+    <Compile Include="gdsdk\UploadParameterType.cs" />
+    <Compile Include="gdsdk\util\DateUtil.cs" />
+    <Compile Include="gdsdk\util\SignatureUtil.cs" />
+    <Compile Include="HttpImg.cs" />
+    <Compile Include="MForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MForm.Designer.cs">
+      <DependentUpon>MForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Product.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Relcate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Relcate.Designer.cs">
+      <DependentUpon>Relcate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShowProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShowProduct.Designer.cs">
+      <DependentUpon>ShowProduct.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShowProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ShowProgress.Designer.cs">
+      <DependentUpon>ShowProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MySqlHelper.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpockLogic_r.cs" />
+    <EmbeddedResource Include="FormBatch.resx">
+      <DependentUpon>FormBatch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DataPage.resx">
+      <DependentUpon>DataPage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLoad.resx">
+      <DependentUpon>FormLoad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormProductPrice.resx">
+      <DependentUpon>FormProductPrice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormQuery.resx">
+      <DependentUpon>FormQuery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormRefresh.resx">
+      <DependentUpon>FormRefresh.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MForm.resx">
+      <DependentUpon>MForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relcate.resx">
+      <DependentUpon>Relcate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShowProduct.resx">
+      <DependentUpon>ShowProduct.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ShowProgress.resx">
+      <DependentUpon>ShowProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="gdsdk\.DS_Store" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SDK-10-net\Ocean.SDK.Net\Ocean.SDK.Net.csproj">
+      <Project>{f124b8f5-9ea6-400d-8d4d-3221a14bd726}</Project>
+      <Name>Ocean.SDK.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\3232.ico" />
+    <None Include="Resources\Q2.jpg" />
+    <None Include="Resources\Q1.png" />
+    <None Include="Resources\Q5.png" />
+    <None Include="Resources\D1.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GCollection", "GCollection\GCollection.csproj", "{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ocean.SDK.Net", "..\SDK-10-net\Ocean.SDK.Net\Ocean.SDK.Net.csproj", "{F124B8F5-9EA6-400D-8D4D-3221A14BD726}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DF4FD43-3D1F-4EFE-AA76-4D64BEB33902}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F124B8F5-9EA6-400D-8D4D-3221A14BD726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F124B8F5-9EA6-400D-8D4D-3221A14BD726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F124B8F5-9EA6-400D-8D4D-3221A14BD726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F124B8F5-9EA6-400D-8D4D-3221A14BD726}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84DC11A4-0053-4A37-8412-0CB8F401C8E5}
+	EndGlobalSection
+EndGlobal
