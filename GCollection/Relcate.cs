@@ -200,14 +200,16 @@ namespace GCollection
 
             if (c1 != "" && c2 != "" && s2 != "")
             {
-                int c = spr.Relcate(c1, c2, s2);
+                int c = spr.opgcc.Relcate(c1, c2, s2);
                 if (c > 0)
                 {
+                    spr.Loadrelcate();
                     huaxian(Color.Red);
                     if (treeView1.SelectedNode != null)
                     {
                         treeView1.SelectedNode.BackColor = Color.Red;
-                        treeView1_AfterSelect(null, null);
+                        treeView2.SelectedNode.BackColor = Color.Red;
+                        //treeView1_NodeMouseClick(null, null);
                     }
                     MessageBox.Show("OK");
                 }
@@ -255,23 +257,24 @@ namespace GCollection
             gh.DrawLine(pen, p2, p3);
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (treeView1.SelectedNode.Nodes.Count < 1)
+            if (e.Node.GetNodeCount(true) < 1)
             {
-                textBox1.Text = treeView1.SelectedNode.Text;
-                textBox1.Tag = treeView1.SelectedNode.Tag;
-                string s1 = GetParentNodeInfo(treeView1.SelectedNode);
-                string[] sarr1 = s1.Split(new char[3] { '-', '-' ,'>'});
+                textBox1.Text = e.Node.Text;
+                textBox1.Tag = e.Node.Tag;
+                string s1 = GetParentNodeInfo(e.Node);
+                string[] sarr1 = s1.Split(new char[3] { '-', '-', '>' });
                 string st1 = "";
                 for (int j = sarr1.Length - 1; j >= 0; j--)
                 {
                     if (sarr1[j] != "")
                     {
-                        st1 += sarr1[j] + "-->";
+                        st1 += sarr1[j] + "/";
                     }
                 }
-                lblp1.Text = st1.TrimEnd(new char[3] { '-', '-', '>' });
+                lblp1.Text = st1.TrimEnd('/');
                 if (spr.diccate.ContainsKey(textBox1.Tag.ToString()))
                 {
                     int s = spr.diccate[textBox1.Tag.ToString()];
@@ -301,10 +304,10 @@ namespace GCollection
                             {
                                 if (sarr2[j] != "")
                                 {
-                                    st2 += sarr2[j] + "-->";
+                                    st2 += sarr2[j] + "/";
                                 }
                             }
-                            lblp2.Text = st2.TrimEnd(new char[3] { '-', '-', '>' });
+                            lblp2.Text = st2.TrimEnd('/');
                             treeView2.Select();
                             treeView2.SelectedNode = catetreenodedata[s];
                             catetreenodedata[s].BackColor = Color.Red;
@@ -330,23 +333,23 @@ namespace GCollection
             return rv;
         }
 
-        private void treeView2_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeView2_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (treeView2.SelectedNode.Nodes.Count < 1)
+            if (e.Node.GetNodeCount(true) < 1)
             {
-                textBox2.Text = treeView2.SelectedNode.Text;
-                textBox2.Tag = treeView2.SelectedNode.Tag;
-                string s2 = GetParentNodeInfo(treeView2.SelectedNode);
+                textBox2.Text = e.Node.Text;
+                textBox2.Tag = e.Node.Tag;
+                string s2 = GetParentNodeInfo(e.Node);
                 string[] sarr2 = s2.Split(new char[3] { '-', '-', '>' });
                 string st2 = "";
                 for (int j = sarr2.Length - 1; j >= 0; j--)
                 {
                     if (sarr2[j] != "")
                     {
-                        st2 += sarr2[j] + "-->";
+                        st2 += sarr2[j] + "/";
                     }
                 }
-                lblp2.Text = st2.TrimEnd(new char[3] { '-', '-', '>' });
+                lblp2.Text = st2.TrimEnd('/');
             }
         }
 

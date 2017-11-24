@@ -94,18 +94,20 @@ namespace GCollection
             }
         }
 
-        private void tvcat_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tvcat_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node.GetNodeCount(true) < 1)
             {
                 txtcate.Text = e.Node.Text;
-                lblcatid.Text = e.Node.Tag.ToString ();
+                lblcatid.Text = e.Node.Tag.ToString();
+                tvcat.CollapseAll();
                 tvcat.Hide();
             }
         }
 
         private void tvcat_Leave(object sender, EventArgs e)
         {
+            tvcat.CollapseAll();
             tvcat.Hide();
         }
 
@@ -290,7 +292,7 @@ namespace GCollection
                         if (string.Empty != goods_sn)
                         {
                             goods_sn = goods_sn.TrimEnd(',');
-                            bool b = spr.UpdateProducts(conditions, goods_sn);
+                            bool b = spr.opgcc.UpdateProducts(conditions, goods_sn);
                             if (b)
                             {
                                 MessageBox.Show("批量修改成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -537,18 +539,21 @@ namespace GCollection
             }
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node.GetNodeCount(true) < 1)
             {
                 qtxtcate.Text = e.Node.Text;
                 qlblcatid.Text = e.Node.Tag.ToString();
+                treeView1.CollapseAll();
                 treeView1.Hide();
             }
         }
 
+
         private void treeView1_Leave(object sender, EventArgs e)
         {
+            treeView1.CollapseAll();
             treeView1.Hide();
         }
 
@@ -740,7 +745,7 @@ namespace GCollection
             if (string.Empty != conditions)
             {
                 conditions = conditions.TrimEnd(new char[] { 'a', 'n', 'd', ' ' });
-                DataTable dt = spr.QueryConditionGoods(conditions);
+                DataTable dt = spr.opgcc.QueryConditionGoods(conditions);
                 return dt;
             }
             return null;
@@ -750,5 +755,6 @@ namespace GCollection
         {
             Querygoods();
         }
+
     }
 }

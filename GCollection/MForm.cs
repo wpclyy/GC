@@ -146,7 +146,7 @@ namespace GCollection
 
             if (r2.X > 0)
             {
-                ckbbest.Left = r2.X + 50;
+                ckbbest.Left = r2.X + 40;
                 ckbbest.Top = r2.Y + 4;
                 ckbbest.Show();
             }
@@ -156,7 +156,7 @@ namespace GCollection
 
             if (r3.X > 0)
             {
-                ckbnew.Left = r3.X + 50;
+                ckbnew.Left = r3.X + 40;
                 ckbnew.Top = r3.Y + 4;
                 ckbnew.Show();
             }
@@ -166,7 +166,7 @@ namespace GCollection
 
             if (r4.X > 0)
             {
-                ckbhot.Left = r4.X + 50;
+                ckbhot.Left = r4.X +40;
                 ckbhot.Top = r4.Y + 4;
                 ckbhot.Show();
             }
@@ -177,7 +177,7 @@ namespace GCollection
 
             if (r5.X > 0)
             {
-                ckbshipping.Left = r5.X + 50;
+                ckbshipping.Left = r5.X +45;
                 ckbshipping.Top = r5.Y + 4;
                 ckbshipping.Show();
             }
@@ -187,7 +187,7 @@ namespace GCollection
 
             if (r6.X > 0)
             {
-                ckbonsale.Left = r6.X + 50;
+                ckbonsale.Left = r6.X + 40;
                 ckbonsale.Top = r6.Y + 4;
                 ckbonsale.Show();
             }
@@ -229,10 +229,10 @@ namespace GCollection
         /// <param name="e"></param>
         private void bgloadcate_DoWork(object sender, DoWorkEventArgs e)
         {
-            DataSet ds = spr.Querydscbrand();
+            DataSet ds = spr.opgcc.Querydscbrand();
             dtbrand = ds.Tables[0];
 
-            DataSet ds1 = spr.Querydsccate();
+            DataSet ds1 = spr.opgcc.Querydsccate();
             dtcate = ds1.Tables[0];
 
             LoadAliCate();
@@ -251,7 +251,7 @@ namespace GCollection
         /// </summary>
         private void Getgoodscount()
         {
-            DataTable dt = spr.Hasgoods();
+            DataTable dt = spr.opgcc.Hasgoods();
             dicgoodscount.Clear();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -311,7 +311,7 @@ namespace GCollection
         public void loadcategoodscount()
         {
             int allcount = 0;
-            allcount = spr.Hasallgoods();
+            allcount = spr.opgcc.Hasallgoods();
             string[] strArray = treeView1.Nodes[0].Text.Split('('); //字符串转数组
             treeView1.Nodes[0].Text = strArray[0] + "(" + allcount + ")";
 
@@ -463,7 +463,7 @@ namespace GCollection
                 this.spro.setprogress(s, "", "当前进度", "");
 
             });
-                this.BeginInvoke(clsobj);
+                this.Invoke(clsobj);
             }
             else
             {
@@ -491,11 +491,11 @@ namespace GCollection
             else
             {
                 MessageBox.Show("完成");
-                if (spro != null)
-                {
-                    spro.Close();
-                }
                 LoadAliCate();
+            }
+            if (spro != null)
+            {
+                spro.Close();
             }
         }
 
@@ -504,7 +504,7 @@ namespace GCollection
         /// </summary>
         private void LoadAliCate()
         {
-            DataSet ds2 = spr.querycate();
+            DataSet ds2 = spr.opgcc.querycate();
             if (ds2.Tables[0] != null && ds2.Tables[0].Rows.Count > 0)
             {
                 dtcateali = ds2.Tables[0];
@@ -524,6 +524,14 @@ namespace GCollection
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 row.Cells["xuhao"].Value = row.Index + 1;
+                if (row.Cells["status"].Value.ToString() == "已上传")
+                {
+                    row.Cells["status"].Style.ForeColor = Color.Red;
+                }
+                else
+                {
+                    row.Cells["status"].Style.ForeColor = SystemColors.WindowText ;
+                }
             }
         }
 
@@ -591,7 +599,7 @@ namespace GCollection
                    c2 = s + "/" + allcount.ToString();
                    this.spro.setsgoodsprogress(c1, c2, "当前供应商进度", "当前商品进度", suppliername);
                });
-                    this.BeginInvoke(clsobj);
+                    this.Invoke(clsobj);
                 }
                 else
                 {
@@ -610,7 +618,7 @@ namespace GCollection
             scurrcount = 0;
             sallcount = 0;
             suppliername = "";
-            DataSet ds = spr.querysuppliers();
+            DataSet ds = spr.opgcc.querysuppliers();
             if (ds != null)
             {
                 sallcount = ds.Tables[0].Rows.Count;
@@ -636,7 +644,7 @@ namespace GCollection
                         }
                         else
                         {
-                            spr.getproductbypage(i, pagesize, mid);
+                            spr.getproductbypage(i, pagesize, mid,allcount);
                         }
                     }
                 }
@@ -656,10 +664,10 @@ namespace GCollection
             else
             {
                 MessageBox.Show("完成");
-                if (spro != null)
-                {
-                    spro.Close();
-                }
+            }
+            if (spro != null)
+            {
+                spro.Close();
             }
             Refreshgoodscount();
         }
@@ -705,7 +713,7 @@ namespace GCollection
                    spro.setprogress(s + "/" + allcount, "", "当前进度", "");
 
                });
-                    this.BeginInvoke(clsobj);
+                    this.Invoke(clsobj);
                 }
                 else
                 {
@@ -753,10 +761,10 @@ namespace GCollection
             else
             {
                 MessageBox.Show("完成");
-                if (spro != null)
-                {
-                    spro.Close();
-                }
+            }
+            if (spro != null)
+            {
+                spro.Close();
             }
             bgwloadsupplier.RunWorkerAsync();
         }
@@ -794,11 +802,11 @@ namespace GCollection
             int startindex = dataPage1.CurrentPage;
             int pagesize = dataPage1.PageSize;
             int totalcount = 0;
-            DataSet ds = spr.queryproductbysupp_page(memeber, startindex, pagesize, out totalcount);
+            DataSet ds = spr.opgcc.queryproductbysupp_page(memeber, startindex, pagesize, out totalcount);
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
-                string[] sarr = s.Split('/');
+                string[] sarr = s.Split(new char[] { '-','>'});
                 string st = "";
                 for (int j = sarr.Length - 1; j >= 0; j--)
                 {
@@ -839,7 +847,7 @@ namespace GCollection
                     }
                     else
                     {
-                        spr.getproductbypage(i, pagesize, mid);
+                        spr.getproductbypage(i, pagesize, mid,allcount);
                     }
                 }
             }
@@ -859,10 +867,10 @@ namespace GCollection
             else
             {
                 MessageBox.Show("完成");
-                if (spro != null)
-                {
-                    spro.Close();
-                }
+            }
+            if (spro != null)
+            {
+                spro.Close();
             }
             listBox1_SelectedValueChanged(null, null);
             Refreshgoodscount();
@@ -870,7 +878,7 @@ namespace GCollection
 
         private void bgwloadsupplier_DoWork(object sender, DoWorkEventArgs e)
         {
-            DataSet dss = spr.querysuppliers();
+            DataSet dss = spr.opgcc.querysuppliers();
             dssupp = dss;
         }
 
@@ -908,11 +916,11 @@ namespace GCollection
             int startindex = dataPage1.CurrentPage;
             int pagesize = dataPage1.PageSize;
             int totalcount = 0;
-            DataSet ds = spr.queryproductbycatid_page(catid, startindex, pagesize, out totalcount);
+            DataSet ds = spr.opgcc.queryproductbycatid_page(catid, startindex, pagesize, out totalcount);
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
-                string[] sarr = s.Split('/');
+                string[] sarr = s.Split(new char[] { '-','>'});
                 string st = "";
                 for (int j = sarr.Length - 1; j >= 0; j--)
                 {
@@ -937,7 +945,7 @@ namespace GCollection
             {
                 if (diccateidali.ContainsKey(diccateidali[catid]))
                 {
-                    rv += "/" + diccatenameali[diccateidali[catid]];
+                    rv += "->" + diccatenameali[diccateidali[catid]];
                     rv += GetParentInfo(diccateidali[catid]);
                 }
             }
@@ -971,7 +979,7 @@ namespace GCollection
             }
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node.GetNodeCount(true) < 1)
             {
@@ -981,15 +989,16 @@ namespace GCollection
                 dataPage1.TotalCount = 0;
                 dataPage1.PageSize = 20;
                 Application.DoEvents();
-                dataPage1_EventPaging(e);
+                treeView1.SelectedNode = e.Node;
+                dataPage1_EventPaging(null);
                 int catid = Convert.ToInt32(e.Node.Tag);
-                int c = spr.Hasgoods(catid);
+                int c = spr.opgcc.Hasgoods(catid);
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
                 e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
             }
             else if (e.Node.Parent == null)
             {
-                int c = spr.Hasallgoods();
+                int c = spr.opgcc.Hasallgoods();
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
                 e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
             }
@@ -1033,7 +1042,6 @@ namespace GCollection
 
         private void MForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            bgloadcate.CancelAsync();
             System.Environment.Exit(0);
         }
 
@@ -1092,7 +1100,7 @@ namespace GCollection
             pt.Is_on_sale = Convert.ToInt16(dr["is_on_sale"]);
             pt.Goods_desc = this.content;
             pt.Goods_sn = dr["goods_sn"].ToString();
-            bool b = spr.UpdateProduct(pt);
+            bool b = spr.opgcc.UpdateProduct(pt);
             if (b)
             {
                 dataGridView1.CurrentRow.Cells["goods_name"].Value = pt.Goods_name;
@@ -1172,11 +1180,11 @@ namespace GCollection
                     return;
                 }
                 pids = pids.TrimEnd(',');
-                bool b = spr.deleteproductbyid(pids);
+                bool b = spr.opgcc.deleteproductbyid(pids);
                 if (b)
                 {
                     MessageBox.Show("删除完成！");
-                    dataPage1_EventPaging(e);
+                    dataPage1_EventPaging(null);
                     Refreshgoodscount();
                 }
             }
@@ -1302,48 +1310,14 @@ namespace GCollection
         /// <param name="e"></param>
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            //DataTable TotalDT = (DataTable)dataGridView1.DataSource;
-            //if (TotalDT == null)
-            //{
-            //    return;
-            //}
-
-            ////克隆一个表结构  
-            //DataTable gridSelectDT = TotalDT.Clone();
-            //string goods_sn = "";
-            //for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            //{
-            //    DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
-            //    if (checkCell != null && ((bool)checkCell.EditingCellFormattedValue == true || (bool)checkCell.FormattedValue == true))
-            //    {
-            //        DataRow dr = (dataGridView1.Rows[i].DataBoundItem as DataRowView).Row;
-            //        object[] obj = dr.ItemArray;
-            //        gridSelectDT.Rows.Add(obj);
-            //        DataRow drnew = gridSelectDT.Rows[gridSelectDT.Rows.Count - 1];
-            //        drnew["goods_thumb"] = GetGoodsImgUrl(drnew["goods_thumb"].ToString());
-            //        goods_sn += "'" + dr["goods_sn"].ToString() + "',";
-            //    }
-            //}
-            //if (gridSelectDT.Rows.Count > 0)
-            //{
-            //    DialogResult dr = MessageBox.Show("您确定上传商品吗？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-            //    if (dr != DialogResult.OK)
-            //    {
-            //        return;
-            //    }
-            //    bool b = spr.Uploadgoods(gridSelectDT);
-            //    if (b)
-            //    {
-            //        goods_sn = goods_sn.TrimEnd(',');
-            //        spr.setgoodsstatus(goods_sn);
-            //        dataPage1_EventPaging(e);
-            //        MessageBox.Show("上传完成！");
-            //    }
-            //}
-            //else {
-            //    MessageBox.Show("请勾选需要上传的商品？", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            //}
             ButtonUpload();
+        }
+
+        class uploadobj
+        {
+            public DataTable dt;
+            public string goodssn;
+            public FormRefresh frm;
         }
 
         private void ButtonUpload()
@@ -1375,36 +1349,16 @@ namespace GCollection
                     return;
                 }
                 Program.mfloadflag = "";
-                FormRefresh frm = new FormRefresh();
+                FormRefresh frm = new FormRefresh(bgwupload);
+                frm.setplocation(310);
                 frm.WindowState = FormWindowState.Normal;
                 frm.setprogress(0, gridSelectDT.Rows.Count);
-                frm.Show();
-                Application.DoEvents();
-                Dictionary<string, string> dic = new Dictionary<string, string>();
-                for (int i=0;i<gridSelectDT.Rows.Count;i++)
-                {
-                    DataTable dt = spr.QueryGoodsbyProductid(gridSelectDT.Rows[i]["goods_sn"].ToString());
-                    dic.Clear();
-                    dic.Add("imagelist", dt.Rows[0]["imagelist"].ToString ());
-                    dic.Add("saleinfo", dt.Rows[0]["saleinfo"].ToString());
-                    dic.Add("productTitle", dt.Rows[0]["productTitle"].ToString());
-                    dic.Add("productID", dt.Rows[0]["productID"].ToString());
-                    dic.Add("desction", dt.Rows[0]["desction"].ToString());
-                    dic.Add("skumodelstr", dt.Rows[0]["skumodelstr"].ToString());
-                    dic.Add("skuInfos", dt.Rows[0]["skuInfos"].ToString());
-                    dic.Add("detailpara", dt.Rows[0]["detailpara"].ToString());
-                    dic.Add("shop_price", gridSelectDT.Rows[i]["shop_price"].ToString());
-                    dic.Add("market_price", gridSelectDT.Rows[i]["market_price"].ToString());
-                    dic.Add("category_id", gridSelectDT.Rows[i]["cat_id"].ToString());
-                    uploaddsc(dic);
-                    frm.setprogress(i+1, gridSelectDT.Rows.Count);
-                    Application.DoEvents();
-                }
-                goods_sn = goods_sn.TrimEnd(',');
-                spr.setgoodsstatus(goods_sn);
-                dataPage1_EventPaging(null);
-                MessageBox.Show("上传完成！");
-                Program.mfloadflag = "OK";
+                uploadobj obj = new uploadobj();
+                obj.frm = frm;
+                obj.goodssn = goods_sn;
+                obj.dt = gridSelectDT;
+                bgwupload.RunWorkerAsync(obj);
+                frm.ShowDialog();
             }
             else
             {
@@ -1413,13 +1367,17 @@ namespace GCollection
         }
 
 
-
-        private void tvcat_AfterSelect(object sender, TreeViewEventArgs e)
+        private void tvcat_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            if (tvcat.SelectedNode == null)
+            {
+                return;
+            }
             if (e.Node.GetNodeCount(true) < 1)
             {
                 txtgoodscate.Text = e.Node.Text;
                 txtgoodscate.Tag = e.Node.Tag;
+                tvcat.CollapseAll();
                 tvcat.Hide();
             }
         }
@@ -1431,6 +1389,7 @@ namespace GCollection
 
         private void tvcat_Leave(object sender, EventArgs e)
         {
+            tvcat.CollapseAll();
             tvcat.Hide();
         }
 
@@ -1438,6 +1397,8 @@ namespace GCollection
         {
             if (!tvcat.Focused)
             {
+                tvcat.SelectedNode = null;
+                tvcat.CollapseAll();
                 tvcat.Hide();
             }
         }
@@ -1457,7 +1418,7 @@ namespace GCollection
         private void bgwrefreshgoods_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             int allcount = 0;
-            allcount = spr.Hasallgoods();
+            allcount = spr.opgcc.Hasallgoods();
             string[] strArray = treeView1.Nodes[0].Text.Split('('); //字符串转数组
             treeView1.Nodes[0].Text = strArray[0] + "(" + allcount + ")";
 
@@ -1483,6 +1444,15 @@ namespace GCollection
                     }
                 }
             }
+
+            //foreach (int catid in catetreenodedata.Keys)
+            //{
+            //    if (dicgoodscount.Keys.Contains(catid.ToString()))
+            //    {
+            //        Application.DoEvents();
+            //        catetreenodedata[catid].Text = diccatedata[catid.ToString()] + "(" + dicgoodscount[catid.ToString()] + ")";
+            //    }
+            //}
             Program.mfloadflag = "OK";
         }
         public void Refreshgoodscount()
@@ -1571,45 +1541,29 @@ namespace GCollection
             }
         }
 
-        private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
-            string goods_sn = this.dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString();
-            txtgoodstitle.Text = this.dataGridView1.CurrentRow.Cells["goods_name"].Value.ToString();
-            txtsellprice.Text = this.dataGridView1.CurrentRow.Cells["market_price"].Value.ToString();
-            txtprice.Text = this.dataGridView1.CurrentRow.Cells["shop_price"].Value.ToString();
-            cmbbrand.SelectedValue = this.dataGridView1.CurrentRow.Cells["brand_id"].Value.ToString();
-            txtjifenjiner.Text = this.dataGridView1.CurrentRow.Cells["integral"].Value.ToString();
-            string img = this.dataGridView1.CurrentRow.Cells["goods_thumb"].Value.ToString();
-            if (img != string.Empty)
+            if (e.RowIndex != (dataGridView1.CurrentRow==null?  -1: dataGridView1.CurrentRow.Index))
             {
-                string picurl = GetGoodsImgUrl(img);
-                pictureBox1.ImageLocation = picurl; ;
+                string goods_sn = this.dataGridView1.Rows[e.RowIndex].Cells["goods_sn"].Value.ToString();
+                txtgoodstitle.Text = this.dataGridView1.Rows[e.RowIndex].Cells["goods_name"].Value.ToString();
+                txtsellprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["market_price"].Value.ToString();
+                txtprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["shop_price"].Value.ToString();
+                cmbbrand.SelectedValue = this.dataGridView1.Rows[e.RowIndex].Cells["brand_id"].Value.ToString();
+                txtjifenjiner.Text = this.dataGridView1.Rows[e.RowIndex].Cells["integral"].Value.ToString();
+                string img = this.dataGridView1.Rows[e.RowIndex].Cells["goods_thumb"].Value.ToString();
+                if (img != string.Empty)
+                {
+                    string picurl = GetGoodsImgUrl(img);
+                    pictureBox1.ImageLocation = picurl; ;
+                }
+                this.content = dataGridView1.Rows[e.RowIndex].Cells["goods_desc"].Value.ToString();
+                SetDetailContent(content);
+
+                string dd = this.dataGridView1.Rows[e.RowIndex].Cells["cat_id"].Value.ToString();
+                txtgoodscate.Text = (diccatedata.Keys.Contains(dd) == true) ? diccatedata[dd] : "";
+                txtgoodscate.Tag = dd;
             }
-            this.content = dataGridView1.CurrentRow.Cells["goods_desc"].Value.ToString();
-            SetDetailContent(content);
-
-            string dd = this.dataGridView1.CurrentRow.Cells["cat_id"].Value.ToString();
-            txtgoodscate.Text = (diccatedata.Keys.Contains(dd) == true) ? diccatedata[dd] : "";
-            txtgoodscate.Tag = dd;
-        }
-
-        /// <summary>
-        /// 上传商品图片
-        /// </summary>
-        /// <param name="picurl"></param>
-        private string[] UploadImg(string picurl)
-        {
-            HttpImg htimg = new HttpImg();
-            Stream sm = htimg.htmlimg(picurl);
-            Image img = Image.FromStream(sm);
-            string[] imgs = new string[3] { "", "", "" };
-            string goods_thumb = "";
-            string goods_img = "";
-            string original_img = "";
-            imgs[0] = goods_thumb;
-            imgs[1] = goods_img;
-            imgs[2] = original_img;
-            return imgs;
         }
 
         /// <summary>
@@ -1705,9 +1659,10 @@ namespace GCollection
         {
             Program.mfloadflag = "";
             Refreshgoodscount();
-            FormRefresh frm = new FormRefresh();
-            frm.Size = new Size(0, 0);
-            frm.Show();
+            FormRefresh frm = new FormRefresh(null);
+            frm.setplocation(210);
+            frm.WindowState = FormWindowState.Normal;
+            frm.ShowDialog();
         }
 
         private void btnproductprice_Click(object sender, EventArgs e)
@@ -1718,19 +1673,20 @@ namespace GCollection
             }
             int rindex = dataGridView1.CurrentRow.Index;
             string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString ();
-            DataTable dt=  spr.QueryGoodsbyProductid(productid);
+            DataTable dt=  spr.opgcc.QueryGoodsbyProductid(productid);
             if (dt != null && dt.Rows.Count > 0)
             {
                 string skuinfo = dt.Rows[0]["skuInfos"].ToString();
                 string shopprice = dt.Rows[0]["extendinfos"].ToString();
+                string skumodelstr = dt.Rows[0]["skumodelstr"].ToString();
                 if (skuinfo == "" || skuinfo == null || skuinfo == "null")
                 {
-
+                    return;
                 }
                 else
                 {
                     string proxyprice = dataGridView1.CurrentRow.Cells["shop_price"].Value.ToString();
-                    FormProductPrice frm = new FormProductPrice(skuinfo, shopprice,proxyprice);
+                    FormProductPrice frm = new FormProductPrice(productid, skuinfo, shopprice, skumodelstr, proxyprice);
                     frm.ShowDialog(this);
                 }
             }
@@ -1752,11 +1708,18 @@ namespace GCollection
         /// </summary>
         private void uploaddsc(Dictionary<string,string>dic)
         {
+            int is_best = 0;//精品
+            int is_new = 0;//新品
+            int is_hot = 0;//热销
+            int is_shipping = 0;//免运费
             int is_on_sale = 1;//1上架，0下架
             int category_id = 0;//商品分类id
             int cat_id = 0;//商品类型，0普通商品
-            string url = "https://cbu01.alicdn.com/";
-            dscapi.gdsdk.GoodRequest gr = new dscapi.gdsdk.GoodRequest(url);
+            float shop_price = 0f;//商城价格
+            float market_price = 0f;//市场价
+            int amountonsale = 0;//库存
+            int brand_id = 0;//品牌
+
             string imagelist = dic["imagelist"];
             string producttitle = dic["productTitle"];
             string productid = dic["productID"];
@@ -1767,30 +1730,102 @@ namespace GCollection
             string desction = dic["desction"];
             string[]  imglst= imagelist.Split(',');
             category_id = int.Parse(dic["category_id"]);
+            shop_price = float.Parse(dic["shop_price"]);
+            market_price = float.Parse(dic["market_price"]);
+            amountonsale = int.Parse(dic["amountonsale"]);
+            brand_id = int.Parse(dic["brand_id"]);
+            is_on_sale = int.Parse(dic["is_on_sale"]);
+            is_best = int.Parse(dic["is_best"]);
+            is_new = int.Parse(dic["is_new"]);
+            is_hot = int.Parse(dic["is_hot"]);
+            is_shipping = int.Parse(dic["is_shipping"]);
+
+            string url = "https://cbu01.alicdn.com/";
+            dscapi.gdsdk.GoodRequest gr = new dscapi.gdsdk.GoodRequest(url);
             JObject saleobj = (JObject)JsonConvert.DeserializeObject(saleinfo);
             if (saleobj["quoteType"].ToString() == "0")
             {
                 cat_id = 0;
-                float shop_price = 0f;
-                float market_price = 0f ;
-                shop_price = float.Parse(dic["shop_price"]);
-                market_price = float.Parse(dic["market_price"]);
-                int goods_id = gr.setgoods(category_id, saleinfo, producttitle, productid, cat_id, skumodelstr, is_on_sale, shop_price, market_price);
+                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best,is_new,is_hot,shop_price, market_price, amountonsale,brand_id);
                 Dictionary<string, JObject> uploadimg = gr.updategoodsdesc(goods_id, imglst, desction);
                 gr.dspec.GoodDetailPara(detailpara, goods_id, cat_id);
             }
             else
             {
                 cat_id = gr.setgoodstypecat(productid + "_" + producttitle);
-                float shop_price = 0f;
-                float market_price = 0f;
-                shop_price = float.Parse(dic["shop_price"]);
-                market_price = float.Parse(dic["market_price"]);
-                int goods_id = gr.setgoods(category_id, saleinfo, producttitle, productid, cat_id, skumodelstr, is_on_sale,shop_price,market_price);
+                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best, is_new, is_hot,shop_price, market_price, amountonsale, brand_id);
                 Dictionary<string, JObject> uploadimg = gr.updategoodsdesc(goods_id, imglst, desction);
                 gr.setspec(skumodelstr, skuinfos, goods_id, cat_id, uploadimg);
                 gr.dspec.GoodDetailPara(detailpara, goods_id, cat_id);
             }
         }
+
+        private void bgwupload_DoWork(object sender, DoWorkEventArgs e)
+        {
+            uploadobj obj = (uploadobj)e.Argument;
+            DataTable gridSelectDT = obj.dt;
+            FormRefresh frm = obj.frm;
+            string goods_sn = obj.goodssn;
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            for (int i = 0; i < gridSelectDT.Rows.Count; i++)
+            {
+                if (((BackgroundWorker)sender).CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                DataTable dt = spr.opgcc.QueryGoodsbyProductid(gridSelectDT.Rows[i]["goods_sn"].ToString());
+                dic.Clear();
+                dic.Add("imagelist", dt.Rows[0]["imagelist"].ToString());
+                dic.Add("saleinfo", dt.Rows[0]["saleinfo"].ToString());
+                dic.Add("skumodelstr", dt.Rows[0]["skumodelstr"].ToString());
+                dic.Add("skuInfos", dt.Rows[0]["skuInfos"].ToString());
+                dic.Add("detailpara", dt.Rows[0]["detailpara"].ToString());
+                dic.Add("productTitle", gridSelectDT.Rows[i]["goods_name"].ToString());
+                dic.Add("productID", gridSelectDT.Rows[i]["goods_sn"].ToString());
+                dic.Add("desction", gridSelectDT.Rows[i]["goods_desc"].ToString());
+                dic.Add("shop_price", gridSelectDT.Rows[i]["shop_price"].ToString());
+                dic.Add("market_price", gridSelectDT.Rows[i]["market_price"].ToString());
+                dic.Add("amountonsale", gridSelectDT.Rows[i]["goods_number"].ToString());
+                dic.Add("category_id", gridSelectDT.Rows[i]["cat_id"].ToString());
+                dic.Add("brand_id", gridSelectDT.Rows[i]["brand_id"].ToString());
+                dic.Add("is_best", gridSelectDT.Rows[i]["is_best"].ToString());
+                dic.Add("is_new", gridSelectDT.Rows[i]["is_new"].ToString());
+                dic.Add("is_hot", gridSelectDT.Rows[i]["is_hot"].ToString());
+                dic.Add("is_on_sale", gridSelectDT.Rows[i]["is_on_sale"].ToString());
+                dic.Add("is_shipping", gridSelectDT.Rows[i]["is_shipping"].ToString());
+                uploaddsc(dic);
+                if (this.InvokeRequired)//等待异步
+                {
+                    Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+                delegate
+                {
+                    frm.setprogress(i + 1, gridSelectDT.Rows.Count);
+                });
+                    this.Invoke(clsobj);
+                }
+            }
+            goods_sn = goods_sn.TrimEnd(',');
+            spr.opgcc.setgoodsstatus(goods_sn);
+        }
+
+        private void bgwupload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show("出错啦");
+            }
+            else if (e.Cancelled)
+            {
+                MessageBox.Show("已取消");
+            }
+            else
+            {
+                MessageBox.Show("上传完成！");
+            }
+            dataPage1_EventPaging(null);
+            Program.mfloadflag = "OK";
+        }
+
     }
 }

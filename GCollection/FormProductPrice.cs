@@ -17,16 +17,20 @@ namespace GCollection
         string skuinfo = "";
         string shop_price = "";
         string proxyprice = "";
+        string skumodelstr = "";
+        string productid = "";
         public FormProductPrice()
         {
             InitializeComponent();
         }
 
-        public FormProductPrice(string s, string p,string proxy)
+        public FormProductPrice(string pid,string s, string p,string skustr,string proxy)
         {
             InitializeComponent();
+            productid = pid;
             skuinfo = s;
             shop_price = p;
+            skumodelstr = skustr;
             proxyprice = proxy;
         }
         JArray sm = null;
@@ -42,7 +46,7 @@ namespace GCollection
             }
             sm = (JArray)JsonConvert.DeserializeObject(skuinfo);
 
-            if (shop_price != null && shop_price != ""&&shop_price != "null")
+            if (shop_price != null && shop_price != "" && shop_price != "null")
             {
                 skuprice = (JArray)JsonConvert.DeserializeObject(shop_price);
                 foreach (JToken p in skuprice.Children())
@@ -53,16 +57,34 @@ namespace GCollection
                         string[] arr = ss.Split(';');
                         if (arr.Length > 0)
                         {
-                            for(int i=0;i<arr.Length;i++)
+                            for (int i = 0; i < arr.Length; i++)
                             {
-                               string[] arrs= arr[i].Split(':');
+                                string[] arrs = arr[i].Split(':');
                                 if (arrs.Length == 2)
                                 {
-                                    dicskuprice.Add(arrs[0],arrs[1]);
+                                    if (!dicskuprice.ContainsKey(arrs[0]))
+                                    {
+                                        dicskuprice.Add(arrs[0], arrs[1]);
+                                    }
                                 }
                             }
                         }
                         break;
+                    }
+                }
+            }
+            if (dicskuprice.Count < 1)
+            {
+                JObject jskustr = (JObject)JsonConvert.DeserializeObject(skumodelstr);
+                JToken jt = jskustr["skuList"];
+                foreach (JToken j in jt.Children())
+                {
+                    string pprice = j["proxyPrice"].ToString();
+                    string rprice = j["retailPrice"].ToString();
+                    string skuid = j["skuId"].ToString();
+                    if (!dicskuprice.ContainsKey(skuid))
+                    {
+                        dicskuprice.Add(skuid, pprice);
                     }
                 }
             }
@@ -128,13 +150,14 @@ namespace GCollection
             lblsku.Top = 5;
 
             TextBox txtprice = new TextBox();
-            txtprice.Tag = skuid;
+            txtprice.Tag = "price,"+skuid;
             txtprice.Width = 80;
             txtprice.Text = price;
             txtprice.Left =300;
             txtprice.Top = 5;
 
             TextBox txtkc = new TextBox();
+            txtkc.Tag = "kc,"+skuid;
             txtkc.Width = 80;
             txtkc.Text = kc;
             txtkc.Left = 450;
@@ -158,8 +181,16 @@ namespace GCollection
                         {
                             if (cc.Tag != null && cc.Tag.ToString() != "")
                             {
-                                string skuid = cc.Tag.ToString();
-                                dicgoodsattr[skuid][2] = cc.Text.Trim();
+                                string s = cc.Tag.ToString();
+                                string[] arr = s.Split(',');
+                                if (arr[0] == "price")
+                                {
+                                    dicgoodsattr[arr[1]][2] = cc.Text.Trim();
+                                }
+                                else if (arr[0] == "kc")
+                                {
+                                    dicgoodsattr[arr[1]][1] = cc.Text.Trim();
+                                }
                             }
                         }
                     }
@@ -176,8 +207,19 @@ namespace GCollection
                 j["amountOnSale"] = dicgoodsattr[skuId][1];
                 j["price"] = dicgoodsattr[skuId][2];
             }
-
            string skuinfos=   JsonConvert.SerializeObject(sm);
+
+            JObject jskustr = (JObject)JsonConvert.DeserializeObject(skumodelstr);
+            JToken jt = jskustr["skuList"];
+            foreach (JToken j in jt.Children())
+            {
+                string skuid = j["skuId"].ToString();
+                j["proxyPrice"] = dicgoodsattr[skuid][2]; ;
+                j["amountOnSale"] = dicgoodsattr[skuid][1];
+            }
+            string skustr=JsonConvert.SerializeObject(jskustr);
+            Opergcc oper = new Opergcc();
+            oper.SaveSkumodelstrAndsaleinfos(productid, skustr, skuinfos);
             MessageBox.Show("OK");
         }
     }

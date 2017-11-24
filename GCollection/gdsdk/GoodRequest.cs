@@ -45,7 +45,7 @@ namespace dscapi.gdsdk
             string specinfo = dr["skuInfos"].ToString();
             string detailpara = dr["detailpara"].ToString();
             int cat_id = setgoodstypecat(goodsname);
-            int goods_id = setgoods(category_id, saleinfo, goodsname, productID, cat_id, spec, 1, 0f,0f);
+            int goods_id = setgoods(category_id, goodsname, productID, cat_id, 1,0,0,0,0, 0f,0f,1000,0);
             Dictionary<string, JObject> uploadimg = updategoodsdesc(goods_id, imglt, desction);
 
             setspec(spec, specinfo, goods_id, cat_id, uploadimg);
@@ -92,41 +92,32 @@ namespace dscapi.gdsdk
         /// <param name="cat_id">Cat identifier.</param>
         /// <param name="spec">Spec.</param>
         /// <param name="on_sale">是否上架</param>
-        public int setgoods( int category_id,string saleinfo,string goodsname,string productID,int cat_id,string spec,int on_sale,float shop_price,float maket_price)
+        public int setgoods( int category_id,string goodsname,string productID,int cat_id,int on_sale,int is_shipping,int is_best,int is_new,int is_hot,float shop_price,float maket_price,int amountonsale,int brand_id)
         {
-            JObject saleobj = (JObject)JsonConvert.DeserializeObject(saleinfo);
             //产品价格
             float reprice = 0;
             float retailprice = 0;
             reprice = shop_price ;
             retailprice = maket_price ;
 
-            //if (saleobj != null)
-            //{
-            //    List<string> prlist = new List<string>();
-            //    foreach (JToken prarr in saleobj["priceRanges"].Children())
-            //    {
-            //        prlist.Add(prarr["price"].ToString());
-            //    }
-            //    prlist.Reverse();
-
-            //    reprice = float.Parse(prlist[0]);
-            //    retailprice = float.Parse(saleobj["retailprice"].HasValues ? saleobj["retailprice"].ToString() : prlist[0]);
-            //}
-
             //插入商品
             Goods gd = new Goods();
             gd.setcat_id(category_id);
             gd.setuser_id(0);
             gd.setgoods_name(goodsname);
-            gd.setbrand_id(0);
+            gd.setbrand_id(brand_id);
             gd.setgoods_sn(productID);
-            gd.setgoods_number(326);
+            gd.setgoods_number(amountonsale);
             gd.setmarket_price(retailprice);
             gd.setshop_price(reprice);
             gd.setreview_status(3);
             gd.setis_alone_sale(1);
+            gd.setis_real(1);
             gd.setis_on_sale(on_sale);
+            gd.setis_shipping(is_shipping);
+            gd.setis_best(is_best);
+            gd.setis_hot(is_hot);
+            gd.setis_new(is_new);
             gd.setgoods_type(cat_id);
             string obj = instance.send<string>(gd);
             JObject sm = (JObject)JsonConvert.DeserializeObject(obj);
@@ -247,14 +238,30 @@ namespace dscapi.gdsdk
                 {
                     string price = j["price"].ToString();
                     string retailPrice = j["retailPrice"].ToString();
-                    List<string> attridlist = new List<string>();
-                    foreach (JToken t in j["attributes"].Children())
-                    {
-                        attridlist.Add(t["attValueID"].ToString());
-                    }
-                    string[] attids = attridlist.ToArray();
-                    string attridstr = string.Join("|", attids);
+                    //List<string> attridlist = new List<string>();
+                    //foreach (JToken t in j["attributes"].Children())
+                    //{
+                    //    attridlist.Add(t["attValueID"].ToString());
+                    //}
+                    //string[] attids = attridlist.ToArray();
+                    //string attridstr = string.Join("|", attids);
 
+                    List<string> listgoodsattrids = new List<string>(); ;
+                    foreach (KeyValuePair<string, entity.Attribute> sl in speclist)
+                    {
+                        entity.Attribute attr = sl.Value;
+                        List<string> speval = new List<string>(attr.attr_values.Split(new string[] { "\r\n" }, StringSplitOptions.None));
+                        foreach (JToken t in j["attributes"].Children())
+                        {
+                            if (speval.Contains(t["attributeValue"].ToString()))
+                            {
+                                listgoodsattrids.Add(t["attValueID"].ToString());
+                                break;
+                            }
+                        }
+                    }
+                    string[] attids = listgoodsattrids.ToArray();
+                    string attridstr = string.Join("|", attids);
                     Products pd = new Products();
                     pd.setgoods_id(goods_id);
                     pd.setgoods_attr(attridstr);

@@ -528,7 +528,7 @@
             this.tvcat.Size = new System.Drawing.Size(51, 21);
             this.tvcat.TabIndex = 33;
             this.tvcat.Visible = false;
-            this.tvcat.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvcat_AfterSelect);
+            this.tvcat.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvcat_NodeMouseClick);
             this.tvcat.Leave += new System.EventHandler(this.tvcat_Leave);
             // 
             // cmbshipping
@@ -785,7 +785,7 @@
             this.treeView1.Size = new System.Drawing.Size(51, 21);
             this.treeView1.TabIndex = 68;
             this.treeView1.Visible = false;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             this.treeView1.Leave += new System.EventHandler(this.treeView1_Leave);
             // 
             // qcmbshipping

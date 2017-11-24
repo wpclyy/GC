@@ -78,7 +78,7 @@ namespace GCollection
             {
                 bgw.CancelAsync();
             }
-            this.Close();
+           // this.Close();
         }
     }
 }

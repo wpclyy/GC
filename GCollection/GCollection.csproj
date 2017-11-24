@@ -153,6 +153,7 @@
     <Compile Include="MForm.Designer.cs">
       <DependentUpon>MForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Opergcc.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

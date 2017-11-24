@@ -69,14 +69,6 @@ namespace com.goudiw
                 }
             }
 
-            AttributeList al = new AttributeList();
-            al.setcat_id(cat_id);
-            al.setattr_type(1);
-            string alobj = instance.send<string>(al);
-            JObject alsm = (JObject)JsonConvert.DeserializeObject(alobj);
-            //现有规格属性
-            JToken list = alsm["info"]["list"];
-
             //相同规格属性值对比，现有值中没有则增加
             Dictionary<string,entity.Attribute> reloadspec = new Dictionary<string, entity.Attribute>();
             foreach(KeyValuePair<string,List<string>> att in specdic)
@@ -245,10 +237,25 @@ namespace com.goudiw
         {
             //商品詳情參數
             JArray obj = (JArray)JsonConvert.DeserializeObject(detailpara);
-            foreach(JToken d in obj)
+            Dictionary<string, string> dicparas = new Dictionary<string, string>();
+            foreach (JToken d in obj)
             {
                 string attributeName = d["attributeName"].ToString();
                 string val = d["value"].ToString();
+                if (dicparas.ContainsKey(attributeName))
+                {
+                    dicparas[attributeName] = dicparas[attributeName] + "," + val;
+                }
+                else
+                {
+                    dicparas.Add(attributeName, val);
+                }
+            }
+
+            foreach (string  dkey in dicparas.Keys)
+            {
+                string attributeName = dkey;
+                string val = dicparas[dkey];
                 dscapi.dsc.goods.Attribute at = new dscapi.dsc.goods.Attribute();
                 at.setcat_id(cat_id);
                 at.setattr_name(attributeName);
