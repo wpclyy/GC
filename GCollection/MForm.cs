@@ -769,13 +769,14 @@ namespace GCollection
             bgwloadsupplier.RunWorkerAsync();
         }
 
-        private void listBox1_SelectedValueChanged(object sender, EventArgs e)
+        private void listBox1_MouseClick(object sender, MouseEventArgs e)
         {
             if (listBox1.SelectedValue != null)
             {
                 this.member = listBox1.SelectedValue.ToString();
                 DataRowView my_row = (DataRowView)(listBox1.SelectedItem);
-                this.suppliername = my_row["company"].ToString();
+                this.suppliername = my_row["company"].ToString().Split('[')[0];
+                SetSupplierGoodscount(this.member);
                 querytype = 1;
                 dataPage1.CurrentPage = 1;
                 dataPage1.PageCount = 0;
@@ -797,12 +798,26 @@ namespace GCollection
             }
         }
 
-        private void Querygoodsbysupp(string memeber)
+        private void SetSupplierGoodscount(string memberid)
+        {
+            DataTable dt = spr.opgcc.QuerySupplierGoodscount(memberid);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataTable dts = ((DataTable)listBox1.DataSource);
+                DataRow[] dr = dts.Select("MemberId='" + memberid + "'");
+                if (dr != null && dr.Length > 0)
+                {
+                    dr[0]["company"] = dt.Rows[0]["company"].ToString() + "[" + dt.Rows[0]["goods_count"].ToString() + "]";
+                }
+            }
+        }
+
+        private void Querygoodsbysupp(string member)
         {
             int startindex = dataPage1.CurrentPage;
             int pagesize = dataPage1.PageSize;
             int totalcount = 0;
-            DataSet ds = spr.opgcc.queryproductbysupp_page(memeber, startindex, pagesize, out totalcount);
+            DataSet ds = spr.opgcc.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
@@ -851,7 +866,6 @@ namespace GCollection
                     }
                 }
             }
-
         }
 
         private void bgwsign_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -872,7 +886,8 @@ namespace GCollection
             {
                 spro.Close();
             }
-            listBox1_SelectedValueChanged(null, null);
+            spr.opgcc.UpdateSupplierGoodscount(this.member);
+            listBox1_MouseClick(null, null);
             Refreshgoodscount();
         }
 

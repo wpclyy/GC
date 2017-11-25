@@ -82,6 +82,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormLoad";
+            this.TopMost = true;
             this.TransparencyKey = System.Drawing.Color.White;
             this.Load += new System.EventHandler(this.FormLoad_Load);
             this.Shown += new System.EventHandler(this.FormLoad_Shown);

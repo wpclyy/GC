@@ -13,9 +13,10 @@ namespace GCollection
         /// <summary>
         /// 本地数据库链接字符串
         /// </summary>
-        string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
+        //string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
+        string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
 
-         /// <summary>
+        /// <summary>
         /// 购低网数据库链接字符串
         /// </summary>
         string strdsc = "server=192.168.2.88;user id=Fany;password=wang198912;database=dasc";
@@ -27,7 +28,7 @@ namespace GCollection
         public DataSet querysuppliers()
         {
             DataSet retSet = new DataSet();
-            retSet = MySqlHelper.GetDataSet(str, "select * from supplier ");
+            retSet = MySqlHelper.GetDataSet(str, " select id,MemberId, concat(company,'[',cast(goods_count as CHAR),']') as company from supplier ");
             return retSet;
         }
 
@@ -290,6 +291,34 @@ namespace GCollection
         {
             string sql = "update productinfo set skumodelstr='"+ skustr + "',skuInfos='"+ skuinfos + "' where productID ='" + productid + "'";
             int c = MySqlHelper.ExecuteNonQuery(str, CommandType.Text, sql);
+            return c;
+        }
+
+        /// <summary>
+        /// 根据MemberId查询供应商的商品数量
+        /// </summary>
+        /// <param name="memberid"></param>
+        /// <returns></returns>
+        public DataTable QuerySupplierGoodscount(string memberid)
+        {
+            UpdateSupplierGoodscount(memberid);
+            string sql = "select  goods_count ,company from supplier where MemberId='" + memberid + "'";
+            DataSet ds1 = MySqlHelper.GetDataSet(str, sql);
+            return ds1.Tables[0];
+        }
+
+
+        /// <summary>
+        /// 更新供应商商品数量
+        /// </summary>
+        /// <param name="memberid"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public int UpdateSupplierGoodscount(string memberid)
+        {
+            string sql1 = "select  count(*)  from productinfo where memberid='" + memberid + "'";
+            string sql2 = "update supplier set goods_count=("+sql1+")  where MemberId='" + memberid + "'";
+            int c = MySqlHelper.ExecuteNonQuery(str, CommandType.Text, sql2);
             return c;
         }
     }
