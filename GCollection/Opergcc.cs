@@ -13,8 +13,8 @@ namespace GCollection
         /// <summary>
         /// 本地数据库链接字符串
         /// </summary>
-        //string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
-        string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
+        string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
+       // string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
 
         /// <summary>
         /// 购低网数据库链接字符串
@@ -68,7 +68,7 @@ namespace GCollection
             totalcount = 0;
             DataSet dss = MySqlHelper.GetDataSet(str, "select  count(*) as totalcount from goods b  where b.cat_id='" + catid + "'");
             totalcount = int.Parse(dss.Tables[0].Rows[0]["totalcount"].ToString());
-            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id,c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where c.cat_id='" + catid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
+            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id, '' as brand_name, c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where c.cat_id='" + catid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
             DataSet retSet = new DataSet();
             retSet = MySqlHelper.GetDataSet(str, sql);
             return retSet;
@@ -87,7 +87,7 @@ namespace GCollection
             totalcount = 0;
             DataSet dss = MySqlHelper.GetDataSet(str, "select  count(*) as totalcount from productinfo a  left join goods b on a.productID=b.goods_sn where a.memberid='" + memberid + "'");
             totalcount = int.Parse(dss.Tables[0].Rows[0]["totalcount"].ToString());
-            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id,c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname ,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where a.memberid='" + memberid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
+            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id, '' as brand_name,c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname ,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where a.memberid='" + memberid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
             DataSet retSet = new DataSet();
             retSet = MySqlHelper.GetDataSet(str, sql);
             return retSet;

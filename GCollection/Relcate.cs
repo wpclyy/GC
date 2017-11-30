@@ -207,20 +207,23 @@ namespace GCollection
                     huaxian(Color.Red);
                     if (treeView1.SelectedNode != null)
                     {
+                        foreach (int key in catetreenodedata.Keys)
+                        {
+                            catetreenodedata[key].BackColor = Color.Transparent;
+                        }
                         treeView1.SelectedNode.BackColor = Color.Red;
                         treeView2.SelectedNode.BackColor = Color.Red;
-                        //treeView1_NodeMouseClick(null, null);
                     }
-                    MessageBox.Show("OK");
+                    MessageBox.Show("OK","提示",MessageBoxButtons.OK,MessageBoxIcon.Information);
                 }
             }
             else if(c1==string.Empty)
             {
-                MessageBox.Show("请选择需要关联的1688分类？", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("请选择需要关联的1688分类!", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (c2 == string.Empty)
             {
-                MessageBox.Show("请选择需要关联的购低网分类？", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("请选择需要关联的购低网分类!", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
         }
@@ -261,9 +264,10 @@ namespace GCollection
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Node.GetNodeCount(true) < 1)
-            {
-                textBox1.Text = e.Node.Text;
-                textBox1.Tag = e.Node.Tag;
+             {
+                treeView1.SelectedNode = e.Node;
+                  textBox1.Text = e.Node.Text;
+                 textBox1.Tag = e.Node.Tag;
                 string s1 = GetParentNodeInfo(e.Node);
                 string[] sarr1 = s1.Split(new char[3] { '-', '-', '>' });
                 string st1 = "";
@@ -288,6 +292,10 @@ namespace GCollection
                         {
                             huaxian(panel1.BackColor);
                         }
+                        foreach (int key in catetreenodedata.Keys)
+                        {
+                            catetreenodedata[key].BackColor = Color.Transparent;
+                        }
                     }
                     else
                     {
@@ -308,9 +316,12 @@ namespace GCollection
                                 }
                             }
                             lblp2.Text = st2.TrimEnd('/');
-                            treeView2.Select();
-                            treeView2.SelectedNode = catetreenodedata[s];
+                            foreach (int key in catetreenodedata.Keys)
+                            {
+                                catetreenodedata[key].BackColor = Color.Transparent;
+                            }
                             catetreenodedata[s].BackColor = Color.Red;
+                            treeView2.SelectedNode = catetreenodedata[s];
                         }
                     }
                 }
@@ -337,6 +348,7 @@ namespace GCollection
         {
             if (e.Node.GetNodeCount(true) < 1)
             {
+                treeView2.SelectedNode = e.Node;
                 textBox2.Text = e.Node.Text;
                 textBox2.Tag = e.Node.Tag;
                 string s2 = GetParentNodeInfo(e.Node);

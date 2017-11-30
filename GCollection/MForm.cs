@@ -19,31 +19,10 @@ namespace GCollection
     public partial class MForm : Form
     {
         /// <summary>
-        /// 业务操作类
+        /// 采集1688业务操作类
         /// </summary>
         SpockLogic_r spr = null;
 
-        public MForm()
-        {
-            InitializeComponent();
-            spr = new SpockLogic_r(this);
-            this.webBrowser1.Url = new Uri(Application.StartupPath + "\\kindeditor\\e.html", UriKind.Absolute);
-            this.webBrowser1.ObjectForScripting = this;
-            dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
-            System.Net.ServicePointManager.DefaultConnectionLimit = 512;   //HTTP请求并发数量最大不超过1024
-        }
-        /// <summary>
-        /// 商品详情编辑器的内容
-        /// </summary>
-        string content = "";
-
-        //设置webBrowser1.ObjectForScripting属性才会调用此方法
-        public void RequestContent(string str)
-        {
-            content = str;
-        }
-
-        delegate void Delegateshowcate(DataSet ds);
         delegate void Delegateshowtoolstripstatus();
         /*每页数量*/
         int pagesize = 5;
@@ -59,6 +38,10 @@ namespace GCollection
         string suppliername = "";
         /*当前供应商ID*/
         string member = "";
+
+        /// <summary>
+        /// 设置进度时用的锁定对象
+        /// </summary>
         private static object ojb = new object();
 
         /// <summary>
@@ -87,117 +70,6 @@ namespace GCollection
         Dictionary<string, string> diccatenameali = new Dictionary<string, string>();
 
         /// <summary>
-        /// 商品查询类型 0:按分类，1：按供应商
-        /// </summary>
-        int querytype = 0;
-
-        private void MForm_Load(object sender, EventArgs e)
-        {
-        }
-
-        public void LoaderData()
-        {
-            bgwloadsupplier.RunWorkerAsync();
-            bgloadcate.RunWorkerAsync();
-        }
-
-        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
-        {
-            string colname = dataGridView1.Columns[e.ColumnIndex].Name;
-            if (e.RowIndex == -1 && (colname == "colcheck" || colname == "is_best" || colname == "is_new" || colname == "is_hot" || colname == "is_shipping" || colname == "is_on_sale"))
-            {
-                ResetHeaderCheckBoxLocation(e.ColumnIndex, e.RowIndex);
-            }
-        }
-
-        /// <summary>
-        /// 固定datagridview,CHECKBOX位置
-        /// </summary>
-        /// <param name="ColumnIndex"></param>
-        /// <param name="RowIndex"></param>
-        private void ResetHeaderCheckBoxLocation(int ColumnIndex, int RowIndex)
-        {
-             int index2= dataGridView1.Columns["is_best"].Index;
-            int index3= dataGridView1.Columns["is_new"].Index;
-            int index4 = dataGridView1.Columns["is_hot"].Index;
-            int index5= dataGridView1.Columns["is_shipping"].Index;
-            int index6 = dataGridView1.Columns["is_on_sale"].Index;
-            int index1 = dataGridView1.Columns["colcheck"].Index;
-
-            Rectangle r1 = dataGridView1.GetColumnDisplayRectangle(index1, false);
-            Rectangle r2 = dataGridView1.GetColumnDisplayRectangle(index2, false);
-            Rectangle r3 = dataGridView1.GetColumnDisplayRectangle(index3, false);
-            Rectangle r4 = dataGridView1.GetColumnDisplayRectangle(index4, false);
-            Rectangle r5 = dataGridView1.GetColumnDisplayRectangle(index5, false);
-            Rectangle r6 = dataGridView1.GetColumnDisplayRectangle(index6, false);
-
-            if (r1.X > 0)
-            {
-                ckball.Left = r1.X + 7 - dataGridView1.HorizontalScrollingOffset;
-                ckball.Top = r1.Y + 4;
-                ckball.Show();
-            }
-            else
-            {
-                ckball.Left = -dataGridView1.HorizontalScrollingOffset;
-                ckball.Top = r1.Y + 4;
-                ckball.Hide();
-            }
-
-            if (r2.X > 0)
-            {
-                ckbbest.Left = r2.X + 40;
-                ckbbest.Top = r2.Y + 4;
-                ckbbest.Show();
-            }
-            else {
-                ckbbest.Hide();
-            }
-
-            if (r3.X > 0)
-            {
-                ckbnew.Left = r3.X + 40;
-                ckbnew.Top = r3.Y + 4;
-                ckbnew.Show();
-            }
-            else {
-                ckbnew.Hide();
-            }
-
-            if (r4.X > 0)
-            {
-                ckbhot.Left = r4.X +40;
-                ckbhot.Top = r4.Y + 4;
-                ckbhot.Show();
-            }
-            else
-            {
-                ckbhot.Hide();
-            }
-
-            if (r5.X > 0)
-            {
-                ckbshipping.Left = r5.X +45;
-                ckbshipping.Top = r5.Y + 4;
-                ckbshipping.Show();
-            }
-            else {
-                ckbshipping.Hide();
-            }
-
-            if (r6.X > 0)
-            {
-                ckbonsale.Left = r6.X + 40;
-                ckbonsale.Top = r6.Y + 4;
-                ckbonsale.Show();
-            }
-            else
-            {
-                ckbonsale.Hide();
-            }
-        }
-
-        /// <summary>
         /// 1688供应商表
         /// </summary>
         DataSet dssupp = new DataSet();
@@ -223,7 +95,85 @@ namespace GCollection
         Dictionary<string, string> dicgoodscount = new Dictionary<string, string>();
 
         /// <summary>
-        /// 查询商品分类
+        /// 商品查询类型 0:按分类，1：按供应商
+        /// </summary>
+        int querytype = 0;
+
+        public MForm()
+        {
+            InitializeComponent();
+            spr = new SpockLogic_r(this);
+            this.webBrowser1.Url = new Uri(Application.StartupPath + "\\kindeditor\\e.html", UriKind.Absolute);
+            this.webBrowser1.ObjectForScripting = this;
+            dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
+            System.Net.ServicePointManager.DefaultConnectionLimit = 512;   //HTTP请求并发数量最大不超过1024
+        }
+
+        /// <summary>
+        /// 商品详情编辑器的内容
+        /// </summary>
+        string content = "";
+
+        //设置webBrowser1.ObjectForScripting属性才会调用此方法
+        public void RequestContent(string str)
+        {
+            content = str;
+        }
+
+        /// <summary>
+        /// 加载初始化数据
+        /// </summary>
+        public void LoaderData()
+        {
+            bgwloadsupplier.RunWorkerAsync();
+            bgloadcate.RunWorkerAsync();
+        }
+
+        #region 加载供应商信息
+        private void bgwloadsupplier_DoWork(object sender, DoWorkEventArgs e)
+        {
+            DataSet dss = spr.opgcc.querysuppliers();
+            dssupp = dss;
+        }
+
+        private void bgwloadsupplier_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            showsuppliers(dssupp);
+        }
+
+        public void showsuppliers(DataSet ds)
+        {
+            if (this.listBox1.InvokeRequired)//等待异步
+            {
+                Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+           delegate
+           {
+               this.listBox1.DataSource = null;
+               this.listBox1.DisplayMember = "company";
+               this.listBox1.ValueMember = "MemberId";
+               this.listBox1.DataSource = ds.Tables[0];
+               this.listBox1.Update();
+               this.listBox1.SelectedItem = null;
+               this.lblsuppliercount.Text = ds.Tables[0].Rows.Count + "个";
+           });
+                this.BeginInvoke(clsobj);
+            }
+            else
+            {
+                this.listBox1.DataSource = null;
+                this.listBox1.DisplayMember = "company";
+                this.listBox1.ValueMember = "MemberId";
+                this.listBox1.DataSource = ds.Tables[0];
+                this.listBox1.Update();
+                this.listBox1.SelectedItem = null;
+                this.lblsuppliercount.Text = ds.Tables[0].Rows.Count + "个";
+            }
+        }
+        #endregion
+
+        #region 加载大商创品牌、商品分类、商品分类数量
+        /// <summary>
+        /// 查询大商创品牌、商品分类
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -244,6 +194,26 @@ namespace GCollection
             showcatedsc();
             Getgoodscount();
             loadcategoodscount();
+        }
+
+        /// <summary>
+        /// 加载1688(分类id,父类id）,（分类id,分类名称）
+        /// </summary>
+        private void LoadAliCate()
+        {
+            DataSet ds2 = spr.opgcc.querycate();
+            if (ds2.Tables[0] != null && ds2.Tables[0].Rows.Count > 0)
+            {
+                dtcateali = ds2.Tables[0];
+                diccateidali.Clear();
+                diccatenameali.Clear();
+                for (int i = 0; i < dtcateali.Rows.Count; i++)
+                {
+                    diccateidali.Add(dtcateali.Rows[i]["catid"].ToString(), dtcateali.Rows[i]["parentIDs"].ToString());
+                    diccatenameali.Add(dtcateali.Rows[i]["catid"].ToString(), dtcateali.Rows[i]["catname"].ToString());
+                }
+            }
+            spr.Loadrelcate();
         }
 
         /// <summary>
@@ -386,36 +356,11 @@ namespace GCollection
                 }
             }
         }
+        #endregion
 
-        public void showsuppliers(DataSet ds)
-        {
-            if (this.listBox1.InvokeRequired)//等待异步
-            {
-                Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
-           delegate
-           {
-               this.listBox1.DataSource = null;
-               this.listBox1.DisplayMember = "company";
-               this.listBox1.ValueMember = "MemberId";
-               this.listBox1.DataSource = ds.Tables[0];
-               this.listBox1.Update();
-               this.listBox1.SelectedItem = null;
-           });
-                this.BeginInvoke(clsobj);
-            }
-            else
-            {
-                this.listBox1.DataSource = null;
-                this.listBox1.DisplayMember = "company";
-                this.listBox1.ValueMember = "MemberId";
-                this.listBox1.DataSource = ds.Tables[0];
-                this.listBox1.Update();
-                this.listBox1.SelectedItem = null;
-            }
-        }
-
+        #region 采集1688商品分类
         /// <summary>
-        /// 获取商品分类
+        /// 采集商品分类
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -482,15 +427,15 @@ namespace GCollection
         {
             if (e.Error != null)
             {
-                MessageBox.Show("出错啦");
+                MessageBox.Show("出错啦", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                MessageBox.Show("已取消");
+                MessageBox.Show("已取消", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("完成");
+                MessageBox.Show("完成", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadAliCate();
             }
             if (spro != null)
@@ -498,43 +443,9 @@ namespace GCollection
                 spro.Close();
             }
         }
+        #endregion
 
-        /// <summary>
-        /// 加载1688分类
-        /// </summary>
-        private void LoadAliCate()
-        {
-            DataSet ds2 = spr.opgcc.querycate();
-            if (ds2.Tables[0] != null && ds2.Tables[0].Rows.Count > 0)
-            {
-                dtcateali = ds2.Tables[0];
-                diccateidali.Clear();
-                diccatenameali.Clear();
-                for (int i = 0; i < dtcateali.Rows.Count; i++)
-                {
-                    diccateidali.Add(dtcateali.Rows[i]["catid"].ToString(), dtcateali.Rows[i]["parentIDs"].ToString());
-                    diccatenameali.Add(dtcateali.Rows[i]["catid"].ToString(), dtcateali.Rows[i]["catname"].ToString());
-                }
-            }
-            spr.Loadrelcate();
-        }
-
-        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
-        {
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                row.Cells["xuhao"].Value = row.Index + 1;
-                if (row.Cells["status"].Value.ToString() == "已上传")
-                {
-                    row.Cells["status"].Style.ForeColor = Color.Red;
-                }
-                else
-                {
-                    row.Cells["status"].Style.ForeColor = SystemColors.WindowText ;
-                }
-            }
-        }
-
+        #region 采集1688供应商商品信息
         /// <summary>
         /// 采集供应商商品
         /// </summary>
@@ -542,25 +453,7 @@ namespace GCollection
         /// <param name="e"></param>
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            if (this.member != "" && listBox1.SelectedItem != null)
-            {
-                if (bgwsign.IsBusy)
-                {
-                    bgwsign.CancelAsync();
-                }
-                else
-                {
-                    DialogResult dr = MessageBox.Show("开始采集商品信息？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                    if (dr != DialogResult.OK)
-                    {
-                        return;
-                    }
-                    bgwsign.RunWorkerAsync(this);
-                    spro = new ShowProgress(bgwsign, "正在采集商品信息");
-                    spro.ShowDialog(this);
-                }
-            }
-            else if (this.member == "" && listBox1.SelectedItem == null)
+            if (listBox1.SelectedItem == null)
             {
                 if (bgwcaiji.IsBusy)
                 {
@@ -575,6 +468,27 @@ namespace GCollection
                     }
                     bgwcaiji.RunWorkerAsync(this);
                     spro = new ShowProgress(bgwcaiji, "正在采集商品信息");
+                    spro.ShowDialog(this);
+                }
+            }
+            else
+            {
+                this.member = listBox1.SelectedValue.ToString();
+                DataRowView my_row = (DataRowView)(listBox1.SelectedItem);
+                this.suppliername = my_row["company"].ToString().Split('[')[0];
+                if (bgwsign.IsBusy)
+                {
+                    bgwsign.CancelAsync();
+                }
+                else
+                {
+                    DialogResult dr = MessageBox.Show("开始采集商品信息？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    if (dr != DialogResult.OK)
+                    {
+                        return;
+                    }
+                    bgwsign.RunWorkerAsync(this);
+                    spro = new ShowProgress(bgwsign, "正在采集商品信息");
                     spro.ShowDialog(this);
                 }
             }
@@ -644,7 +558,7 @@ namespace GCollection
                         }
                         else
                         {
-                            spr.getproductbypage(i, pagesize, mid,allcount);
+                            spr.getproductbypage(i, pagesize, mid, allcount, allpage);
                         }
                     }
                 }
@@ -655,15 +569,15 @@ namespace GCollection
         {
             if (e.Error != null)
             {
-                MessageBox.Show("出错啦");
+                MessageBox.Show("出错啦", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                MessageBox.Show("已取消");
+                MessageBox.Show("已取消", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("完成");
+                MessageBox.Show("完成", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             if (spro != null)
             {
@@ -671,7 +585,9 @@ namespace GCollection
             }
             Refreshgoodscount();
         }
+        #endregion
 
+        #region 采集1688供应商信息
         /// <summary>
         /// 获取供应商
         /// </summary>
@@ -741,7 +657,7 @@ namespace GCollection
                     }
                     else
                     {
-                        spr.start(i, pagesize);
+                        spr.start(i, pagesize, allpage, allcount);
                     }
                 }
             }
@@ -752,15 +668,15 @@ namespace GCollection
         {
             if (e.Error != null)
             {
-                MessageBox.Show("出错啦");
+                MessageBox.Show("出错啦", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                MessageBox.Show("已取消");
+                MessageBox.Show("已取消", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("完成");
+                MessageBox.Show("完成", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             if (spro != null)
             {
@@ -768,77 +684,9 @@ namespace GCollection
             }
             bgwloadsupplier.RunWorkerAsync();
         }
+        #endregion
 
-        private void listBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (listBox1.SelectedValue != null)
-            {
-                this.member = listBox1.SelectedValue.ToString();
-                DataRowView my_row = (DataRowView)(listBox1.SelectedItem);
-                this.suppliername = my_row["company"].ToString().Split('[')[0];
-                SetSupplierGoodscount(this.member);
-                querytype = 1;
-                dataPage1.CurrentPage = 1;
-                dataPage1.PageCount = 0;
-                dataPage1.TotalCount = 0;
-                dataPage1.PageSize = 20;
-                Querygoodsbysupp(this.member);
-            }
-            else
-            {
-                this.member = "";
-                this.suppliername = "";
-                SetGoodsDetailinfoempty();
-                dataPage1.CurrentPage = 1;
-                dataPage1.PageCount = 0;
-                dataPage1.TotalCount = 0;
-                dataPage1.PageSize = 20;
-                this.dataGridView1.AutoGenerateColumns = false;
-                this.dataGridView1.DataSource = null;
-            }
-        }
-
-        private void SetSupplierGoodscount(string memberid)
-        {
-            DataTable dt = spr.opgcc.QuerySupplierGoodscount(memberid);
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                DataTable dts = ((DataTable)listBox1.DataSource);
-                DataRow[] dr = dts.Select("MemberId='" + memberid + "'");
-                if (dr != null && dr.Length > 0)
-                {
-                    dr[0]["company"] = dt.Rows[0]["company"].ToString() + "[" + dt.Rows[0]["goods_count"].ToString() + "]";
-                }
-            }
-        }
-
-        private void Querygoodsbysupp(string member)
-        {
-            int startindex = dataPage1.CurrentPage;
-            int pagesize = dataPage1.PageSize;
-            int totalcount = 0;
-            DataSet ds = spr.opgcc.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
-            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
-            {
-                string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
-                string[] sarr = s.Split(new char[] { '-','>'});
-                string st = "";
-                for (int j = sarr.Length - 1; j >= 0; j--)
-                {
-                    if (sarr[j] != "")
-                    {
-                        st += sarr[j] + "/";
-                    }
-                }
-                ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
-            }
-            SetGoodsDetailinfoempty();
-            this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.DataSource = null;
-            this.dataGridView1.DataSource = ds.Tables[0];
-            dataPage1.TotalCount = totalcount;
-        }
-
+        #region 采集单个供应商的商品信息
         private void bgwsign_DoWork(object sender, DoWorkEventArgs e)
         {
             ccurrcount = 0;
@@ -862,7 +710,7 @@ namespace GCollection
                     }
                     else
                     {
-                        spr.getproductbypage(i, pagesize, mid,allcount);
+                        spr.getproductbypage(i, pagesize, mid, allcount, allpage);
                     }
                 }
             }
@@ -872,15 +720,15 @@ namespace GCollection
         {
             if (e.Error != null)
             {
-                MessageBox.Show("出错啦");
+                MessageBox.Show("出错啦", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                MessageBox.Show("已取消");
+                MessageBox.Show("已取消", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("完成");
+                MessageBox.Show("完成", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             if (spro != null)
             {
@@ -890,22 +738,432 @@ namespace GCollection
             listBox1_MouseClick(null, null);
             Refreshgoodscount();
         }
+        #endregion
 
-        private void bgwloadsupplier_DoWork(object sender, DoWorkEventArgs e)
+        #region 供应商列表操作
+
+        /// <summary>
+        /// 供应商列表点击刷新商品数量，查询商品信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            DataSet dss = spr.opgcc.querysuppliers();
-            dssupp = dss;
+            querytype = 1;
+            if (listBox1.SelectedValue != null)
+            {
+                this.member = listBox1.SelectedValue.ToString();
+                DataRowView my_row = (DataRowView)(listBox1.SelectedItem);
+                this.suppliername = my_row["company"].ToString().Split('[')[0];
+                SetSupplierGoodscount(this.member);
+                dataPage1.CurrentPage = 1;
+                dataPage1.PageCount = 0;
+                dataPage1.TotalCount = 0;
+                dataPage1.PageSize = 20;
+                Querygoodsbysupp(this.member);
+            }
+        }
+        private void SetDatagridviewEmpty()
+        {
+            listBox1.SelectedItem = null;
+            this.member = "";
+            this.suppliername = "";
+            SetGoodsDetailinfoempty();
+            dataPage1.CurrentPage = 1;
+            dataPage1.PageCount = 0;
+            dataPage1.TotalCount = 0;
+            dataPage1.PageSize = 20;
+            this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.DataSource = null;
         }
 
-        private void bgwloadsupplier_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        /// <summary>
+        /// 刷新供应商商品数量
+        /// </summary>
+        /// <param name="memberid"></param>
+        private void SetSupplierGoodscount(string memberid)
         {
-            showsuppliers(dssupp);
+            DataTable dt = spr.opgcc.QuerySupplierGoodscount(memberid);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataTable dts = ((DataTable)listBox1.DataSource);
+                DataRow[] dr = dts.Select("MemberId='" + memberid + "'");
+                if (dr != null && dr.Length > 0)
+                {
+                    dr[0]["company"] = dt.Rows[0]["company"].ToString() + "[" + dt.Rows[0]["goods_count"].ToString() + "]";
+                }
+            }
         }
 
+        /// <summary>
+        /// 根据供应商ID查询商品
+        /// </summary>
+        /// <param name="member"></param>
+        private void Querygoodsbysupp(string member)
+        {
+            int startindex = dataPage1.CurrentPage;
+            int pagesize = dataPage1.PageSize;
+            int totalcount = 0;
+            DataSet ds = spr.opgcc.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
+            for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            {
+                string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
+                string[] sarr = s.Split(new char[] { '-', '>' });
+                string st = "";
+                for (int j = sarr.Length - 1; j >= 0; j--)
+                {
+                    if (sarr[j] != "")
+                    {
+                        st += sarr[j] + "/";
+                    }
+                }
+                ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
+                string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString();
+                cmbbrand.SelectedValue = brand_id;
+                if (cmbbrand.SelectedItem != null)
+                {
+                    ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+                }
+                else
+                {
+                    ds.Tables[0].Rows[i]["brand_name"] = "";
+                }
+            }
+            SetGoodsDetailinfoempty();
+            this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.DataSource = null;
+            this.dataGridView1.DataSource = ds.Tables[0];
+            dataPage1.TotalCount = totalcount;
+        }
+        #endregion
+
+        #region 供应商搜索
+        /// <summary>
+        ///  搜索供应商
+        /// </summary>
+        private void btnsuppsousou_Click(object sender, EventArgs e)
+        {
+            if (txtsuppsousou.Text.Trim() != "")
+            {
+                string soutext = txtsuppsousou.Text.Trim();
+                Setlistselected(soutext);
+                SetDatagridviewEmpty();
+            }
+            else
+            {
+                dicquerysupp.Clear();
+                listBox1.TopIndex = 0;
+            }
+        }
+
+        private void Setlistselected(string text)
+        {
+            dicquerysupp.Clear();
+            for (int i = 0; i < listBox1.Items.Count; i++)
+            {
+                string company = ((DataRowView)listBox1.Items[i])["company"].ToString();
+                if (company.Contains(text))
+                {
+                    dicquerysupp.Add(i, company);
+                }
+            }
+            if (dicquerysupp.Keys.Count > 0)
+            {
+                if (listBox1.TopIndex == dicquerysupp.Keys.First())
+                {
+                    listBox1.Refresh();
+                    //listBox1.TopIndex = dicquerysupp.Keys.First();
+                }
+                else
+                {
+                    // listBox1.Refresh();
+                    listBox1.TopIndex = dicquerysupp.Keys.First();
+                }
+            }
+            else
+            {
+                if (listBox1.TopIndex == 0)
+                {
+                    listBox1.Refresh();
+                }
+                else
+                {
+                    listBox1.TopIndex = 0;
+                }
+            }
+        }
+        Dictionary<int, string> dicquerysupp = new Dictionary<int, string>();
+
+        private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e.Index < 0)
+            {
+                return;
+            }
+            Color vColor = e.ForeColor;
+            string s = (((ListBox)sender).Items[e.Index] as DataRowView)["company"].ToString();
+            if (dicquerysupp.Values.Contains(s))
+            {
+                vColor = Color.Red;
+            }
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                e.Graphics.FillRectangle(new SolidBrush(Color.Blue), e.Bounds);
+                //e.Graphics.DrawString(s, e.Font, new SolidBrush(Color.White), e.Bounds);
+                TextRenderer.DrawText(e.Graphics, s, e.Font, e.Bounds, Color.White, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
+            }
+            else
+            {
+                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
+                //e.Graphics.DrawString(s, e.Font,new SolidBrush(vColor), e.Bounds);
+                TextRenderer.DrawText(e.Graphics, s, e.Font, e.Bounds, vColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
+                e.DrawFocusRectangle();
+            }
+        }
+
+        private void listBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+                listBox1_MouseClick(null, null);
+            }
+        }
+
+        private void txtsuppsousou_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyValue == 13)
+            {
+                btnsuppsousou.PerformClick();
+            }
+        }
+
+        private void txtsuppsousou_Enter(object sender, EventArgs e)
+        {
+            if (txtsuppsousou.Text.Trim() == "请输入供应商名称")
+            {
+                txtsuppsousou.Text = "";
+                txtsuppsousou.ForeColor = SystemColors.WindowText;
+            }
+        }
+
+        private void txtsuppsousou_Leave(object sender, EventArgs e)
+        {
+            if (txtsuppsousou.Text.Trim() == "")
+            {
+                txtsuppsousou.ForeColor = Color.Gainsboro;
+                txtsuppsousou.Text = "请输入供应商名称";
+            }
+
+        }
+        #endregion
+
+        #region 商品列表相关操作
+        /// <summary>
+        /// 获取商品原图地址URL
+        /// </summary>
+        /// <param name="spath"></param>
+        /// <returns></returns>
+        private string GetGoodsImgUrl(string spath)
+        {
+            int p2 = spath.LastIndexOf('.');
+            int p1 = spath.IndexOf('.');
+            string picurl = "";
+            if (p1 != p2)
+            {
+                picurl = spath.Substring(0, p1) + "." + spath.Substring(p2 + 1);
+            }
+            else
+            {
+                picurl = spath;
+            }
+
+            string url = "https://cbu01.alicdn.com/";
+            if (!picurl.Contains("https://"))
+            {
+                picurl = url + picurl;
+            }
+            return picurl;
+        }
+
+        /// <summary>
+        /// 保存图片到本地
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="imgname"></param>
+        private void SaveImg(Image img, string imgname)
+        {
+            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + @"image\"))
+            {
+                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"image\");
+            }
+            string tempFileName = AppDomain.CurrentDomain.BaseDirectory + @"image\" + imgname + ".jpg";
+            img.Save(tempFileName, img.RawFormat);
+        }
+
+        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            string colname = dataGridView1.Columns[e.ColumnIndex].Name;
+            if (e.RowIndex == -1 && (colname == "colcheck" || colname == "is_best" || colname == "is_new" || colname == "is_hot" || colname == "is_shipping" || colname == "is_on_sale"))
+            {
+                ResetHeaderCheckBoxLocation(e.ColumnIndex, e.RowIndex);
+            }
+        }
+
+        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            btnview.PerformClick();
+        }
+
+        private void dataGridView1_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (dataGridView1.IsCurrentCellDirty)
+            {
+                dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
+        }
+
+        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex != (dataGridView1.CurrentRow == null ? -1 : dataGridView1.CurrentRow.Index))
+            {
+                string goods_sn = this.dataGridView1.Rows[e.RowIndex].Cells["goods_sn"].Value.ToString();
+                txtgoodstitle.Text = this.dataGridView1.Rows[e.RowIndex].Cells["goods_name"].Value.ToString();
+                txtsellprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["market_price"].Value.ToString();
+                txtprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["shop_price"].Value.ToString();
+                cmbbrand.SelectedValue = this.dataGridView1.Rows[e.RowIndex].Cells["brand_id"].Value.ToString();
+                txtjifenjiner.Text = this.dataGridView1.Rows[e.RowIndex].Cells["integral"].Value.ToString();
+                string img = this.dataGridView1.Rows[e.RowIndex].Cells["goods_thumb"].Value.ToString();
+                if (img != string.Empty)
+                {
+                    string picurl = GetGoodsImgUrl(img);
+                    pictureBox1.ImageLocation = picurl; ;
+                }
+                this.content = dataGridView1.Rows[e.RowIndex].Cells["goods_desc"].Value.ToString();
+                SetDetailContent(content);
+
+                string dd = this.dataGridView1.Rows[e.RowIndex].Cells["cat_id"].Value.ToString();
+                txtgoodscate.Text = (diccatedata.Keys.Contains(dd) == true) ? diccatedata[dd] : "";
+                txtgoodscate.Tag = dd;
+            }
+        }
+
+        private void dataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                row.Cells["xuhao"].Value = row.Index + 1;
+                if (row.Cells["status"].Value.ToString() == "已上传")
+                {
+                    row.Cells["status"].Style.ForeColor = Color.Red;
+                }
+                else
+                {
+                    row.Cells["status"].Style.ForeColor = SystemColors.WindowText;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 固定datagridview,CHECKBOX位置
+        /// </summary>
+        /// <param name="ColumnIndex"></param>
+        /// <param name="RowIndex"></param>
+        private void ResetHeaderCheckBoxLocation(int ColumnIndex, int RowIndex)
+        {
+            int index2 = dataGridView1.Columns["is_best"].Index;
+            int index3 = dataGridView1.Columns["is_new"].Index;
+            int index4 = dataGridView1.Columns["is_hot"].Index;
+            int index5 = dataGridView1.Columns["is_shipping"].Index;
+            int index6 = dataGridView1.Columns["is_on_sale"].Index;
+            int index1 = dataGridView1.Columns["colcheck"].Index;
+
+            Rectangle r1 = dataGridView1.GetColumnDisplayRectangle(index1, false);
+            Rectangle r2 = dataGridView1.GetColumnDisplayRectangle(index2, false);
+            Rectangle r3 = dataGridView1.GetColumnDisplayRectangle(index3, false);
+            Rectangle r4 = dataGridView1.GetColumnDisplayRectangle(index4, false);
+            Rectangle r5 = dataGridView1.GetColumnDisplayRectangle(index5, false);
+            Rectangle r6 = dataGridView1.GetColumnDisplayRectangle(index6, false);
+
+            if (r1.X > 0)
+            {
+                ckball.Left = r1.X + 7 - dataGridView1.HorizontalScrollingOffset;
+                ckball.Top = r1.Y + 4;
+                ckball.Show();
+            }
+            else
+            {
+                ckball.Left = -dataGridView1.HorizontalScrollingOffset;
+                ckball.Top = r1.Y + 4;
+                ckball.Hide();
+            }
+
+            if (r2.X > 0)
+            {
+                ckbbest.Left = r2.X + 40;
+                ckbbest.Top = r2.Y + 4;
+                ckbbest.Show();
+            }
+            else
+            {
+                ckbbest.Hide();
+            }
+
+            if (r3.X > 0)
+            {
+                ckbnew.Left = r3.X + 40;
+                ckbnew.Top = r3.Y + 4;
+                ckbnew.Show();
+            }
+            else
+            {
+                ckbnew.Hide();
+            }
+
+            if (r4.X > 0)
+            {
+                ckbhot.Left = r4.X + 40;
+                ckbhot.Top = r4.Y + 4;
+                ckbhot.Show();
+            }
+            else
+            {
+                ckbhot.Hide();
+            }
+
+            if (r5.X > 0)
+            {
+                ckbshipping.Left = r5.X + 45;
+                ckbshipping.Top = r5.Y + 4;
+                ckbshipping.Show();
+            }
+            else
+            {
+                ckbshipping.Hide();
+            }
+
+            if (r6.X > 0)
+            {
+                ckbonsale.Left = r6.X + 40;
+                ckbonsale.Top = r6.Y + 4;
+                ckbonsale.Show();
+            }
+            else
+            {
+                ckbonsale.Hide();
+            }
+        }
+        #endregion
+
+        #region 分页控件操作
+        /// <summary>
+        /// 分页操作事件
+        /// </summary>
+        /// <param name="e"></param>
         private void dataPage1_EventPaging(EventArgs e)
         {
             if (querytype == 0)
             {
+                //单击商品分类树时执行操作
                 if (treeView1.SelectedNode != null)
                 {
                     if (treeView1.SelectedNode.Nodes.Count < 1)
@@ -918,6 +1176,7 @@ namespace GCollection
             }
             else if (querytype == 1)
             {
+                //单击供应商列表时执行操作
                 if (listBox1.SelectedItem != null)
                 {
                     string memberid = listBox1.SelectedValue.ToString();
@@ -926,6 +1185,10 @@ namespace GCollection
             }
         }
 
+        /// <summary>
+        /// 根据商品分类获取商品信息
+        /// </summary>
+        /// <param name="catid"></param>
         private void GvDataBind(string catid)
         {
             int startindex = dataPage1.CurrentPage;
@@ -935,7 +1198,7 @@ namespace GCollection
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
-                string[] sarr = s.Split(new char[] { '-','>'});
+                string[] sarr = s.Split(new char[] { '-', '>' });
                 string st = "";
                 for (int j = sarr.Length - 1; j >= 0; j--)
                 {
@@ -945,6 +1208,16 @@ namespace GCollection
                     }
                 }
                 ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
+                string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString ();
+                cmbbrand.SelectedValue = brand_id;
+                if (cmbbrand.SelectedItem != null)
+                {
+                    ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+                }
+                else
+                {
+                    ds.Tables[0].Rows[i]["brand_name"] = "";
+                }
             }
             SetGoodsDetailinfoempty();
             this.dataGridView1.AutoGenerateColumns = false;
@@ -953,6 +1226,11 @@ namespace GCollection
             dataPage1.TotalCount = totalcount;
         }
 
+        /// <summary>
+        /// 根据分类ID获取全部父类导航格式
+        /// </summary>
+        /// <param name="catid"></param>
+        /// <returns></returns>
         private string GetParentInfo(string catid)
         {
             string rv = "";
@@ -967,6 +1245,7 @@ namespace GCollection
             return rv;
         }
 
+        //清空商品详情编辑器
         private void SetGoodsDetailinfoempty()
         {
             foreach (TabPage tp in tabControl2.TabPages)
@@ -993,222 +1272,9 @@ namespace GCollection
                 }
             }
         }
+        #endregion
 
-        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
-        {
-            if (e.Node.GetNodeCount(true) < 1)
-            {
-                querytype = 0;
-                dataPage1.CurrentPage = 1;
-                dataPage1.PageCount = 0;
-                dataPage1.TotalCount = 0;
-                dataPage1.PageSize = 20;
-                Application.DoEvents();
-                treeView1.SelectedNode = e.Node;
-                dataPage1_EventPaging(null);
-                int catid = Convert.ToInt32(e.Node.Tag);
-                int c = spr.opgcc.Hasgoods(catid);
-                string[] strArray = e.Node.Text.Split('('); //字符串转数组
-                e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
-            }
-            else if (e.Node.Parent == null)
-            {
-                int c = spr.opgcc.Hasallgoods();
-                string[] strArray = e.Node.Text.Split('('); //字符串转数组
-                e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
-            }
-            else
-            {
-                string catid = e.Node.Tag.ToString();
-                if (dicgoodscount.Keys.Contains(catid))
-                {
-                    e.Node.Text = diccatedata[catid] + "(" + dicgoodscount[catid] + ")";
-                }
-            }
-        }
-
-        public void SetDetailContent(string c)
-        {
-            webBrowser1.Document.InvokeScript("setContent", new object[] { c });
-        }
-
-        private void btnview_Click(object sender, EventArgs e)
-        {
-            string url = Application.StartupPath.ToString() + "/html/product.html";
-            string content = this.content;
-            this.Write(url, content);
-            ShowProduct spr = new ShowProduct();
-            spr.seturl(url, txtgoodstitle.Text);
-            spr.ShowDialog(this);
-        }
-
-
-        public void Write(string url, string content)
-        {
-            FileStream fs = new FileStream(url, FileMode.Create);
-            //获得字节数组
-            byte[] data = Encoding.Default.GetBytes(content);
-            //开始写入
-            fs.Write(data, 0, data.Length);
-            //清空缓冲区、关闭流
-            fs.Flush();
-            fs.Close();
-        }
-
-        private void MForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            System.Environment.Exit(0);
-        }
-
-        private void webBrowser1_Resize(object sender, EventArgs e)
-        {
-            this.webBrowser1.Refresh();
-        }
-
-        /// <summary>
-        /// 单个修改商品
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnsave_Click(object sender, EventArgs e)
-        {
-            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
-            {
-                return;
-            }
-            int rindex = dataGridView1.CurrentRow.Index;
-            DataRow dr = (dataGridView1.Rows[rindex].DataBoundItem as DataRowView).Row;
-            Product pt = new Product();
-
-            if (string.Empty == txtgoodstitle.Text.Trim())
-            {
-                return;
-            }
-
-            if (string.Empty == txtsellprice.Text.Trim())
-            {
-                return;
-            }
-
-            if (string.Empty == txtprice.Text.Trim())
-            {
-                return;
-            }
-
-            if (string.Empty == txtjifenjiner.Text.Trim())
-            {
-                return;
-            }
-
-            pt.Goods_name = txtgoodstitle.Text.Trim();
-            pt.Market_price = Convert.ToDecimal(txtsellprice.Text.Trim());
-            pt.Shop_price = Convert.ToDecimal(txtprice.Text.Trim());
-            pt.Integral = Convert.ToInt32(txtjifenjiner.Text.Trim());
-            pt.Cat_id = Convert.ToInt32((txtgoodscate.Tag == null || txtgoodscate.Tag.ToString() == "") ? "0" : txtgoodscate.Tag.ToString());
-            pt.Brand_id = Convert.ToInt32((cmbbrand.SelectedValue == null || cmbbrand.SelectedValue.ToString() == "") ? "0" : cmbbrand.SelectedValue.ToString());
-            pt.Goods_number = Convert.ToUInt16(dr["goods_number"]);
-            pt.Goods_weight = Convert.ToDecimal(dr["goods_weight"]);
-            pt.Is_best = Convert.ToInt16(dr["is_best"]);
-            pt.Is_new = Convert.ToInt16(dr["is_new"]);
-            pt.Is_hot = Convert.ToInt16(dr["is_hot"]);
-            pt.Is_shipping = Convert.ToInt16(dr["is_shipping"]);
-            pt.Is_on_sale = Convert.ToInt16(dr["is_on_sale"]);
-            pt.Goods_desc = this.content;
-            pt.Goods_sn = dr["goods_sn"].ToString();
-            bool b = spr.opgcc.UpdateProduct(pt);
-            if (b)
-            {
-                dataGridView1.CurrentRow.Cells["goods_name"].Value = pt.Goods_name;
-                dataGridView1.CurrentRow.Cells["market_price"].Value = pt.Market_price;
-                dataGridView1.CurrentRow.Cells["shop_price"].Value = pt.Shop_price;
-                dataGridView1.CurrentRow.Cells["cat_id"].Value = pt.Cat_id;
-                dataGridView1.CurrentRow.Cells["brand_id"].Value = pt.Brand_id;
-                dataGridView1.CurrentRow.Cells["goods_desc"].Value = pt.Goods_desc;
-                dataGridView1.CurrentRow.Cells["integral"].Value = pt.Integral;
-                Refreshgoodscount();
-                MessageBox.Show("保存成功！");
-            }
-        }
-
-        private void TxtDigit_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar != 8 && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void TxtFloat_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar != 8 && !Char.IsDigit(e.KeyChar) && e.KeyChar != 0x2E)
-            {
-                e.Handled = true;
-            }
-
-            if (e.KeyChar == '.')   //允许输入回退键
-            {
-                TextBox tb = sender as TextBox;
-
-                if (tb.Text == "")
-                {
-                    tb.Text = "0.";
-                    tb.Select(tb.Text.Length, 0);
-                    e.Handled = true;
-                }
-                else if (tb.Text.Contains("."))
-                {
-                    e.Handled = true;
-                }
-                else
-                {
-                    e.Handled = false;
-                }
-            }
-        }
-
-        /// <summary>
-        /// 批量删除商品
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            DataTable TotalDT = (DataTable)dataGridView1.DataSource;
-            if (TotalDT == null)
-            {
-                return;
-            }
-            string pids = "";
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
-                if (checkCell != null && ((bool)checkCell.EditingCellFormattedValue == true || (bool)checkCell.FormattedValue == true))
-                {
-                    pids += "'" + this.dataGridView1.Rows[i].Cells["goods_sn"].Value.ToString() + "',";
-                }
-            }
-            if (pids != "")
-            {
-                DialogResult dr = MessageBox.Show("您确定删除吗？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (dr != DialogResult.OK)
-                {
-                    return;
-                }
-                pids = pids.TrimEnd(',');
-                bool b = spr.opgcc.deleteproductbyid(pids);
-                if (b)
-                {
-                    MessageBox.Show("删除完成！");
-                    dataPage1_EventPaging(null);
-                    Refreshgoodscount();
-                }
-            }
-            else
-            {
-                MessageBox.Show("请勾选需要删除的商品？", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
+        #region checkbox权限操作
         private void ckball_CheckedChanged(object sender, EventArgs e)
         {
             if (ckball.Checked == true)
@@ -1317,70 +1383,58 @@ namespace GCollection
                 }
             }
         }
+        #endregion
+
+        #region 商品详情编辑器操作
+        /// <summary>
+        /// 设置商品详情编辑器内容
+        /// </summary>
+        /// <param name="c"></param>
+        public void SetDetailContent(string c)
+        {
+            webBrowser1.Document.InvokeScript("setContent", new object[] { c });
+        }
 
         /// <summary>
-        /// 上传商品
+        /// 商品详情预览
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton4_Click(object sender, EventArgs e)
+        private void btnview_Click(object sender, EventArgs e)
         {
-            ButtonUpload();
+            string url = Application.StartupPath.ToString() + "/html/product.html";
+            string content = this.content;
+            this.Write(url, content);
+            ShowProduct spr = new ShowProduct();
+            spr.seturl(url, txtgoodstitle.Text);
+            spr.ShowDialog(this);
         }
 
-        class uploadobj
+        /// <summary>
+        /// 写文件
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="content"></param>
+        public void Write(string url, string content)
         {
-            public DataTable dt;
-            public string goodssn;
-            public FormRefresh frm;
+            FileStream fs = new FileStream(url, FileMode.Create);
+            //获得字节数组
+            byte[] data = Encoding.Default.GetBytes(content);
+            //开始写入
+            fs.Write(data, 0, data.Length);
+            //清空缓冲区、关闭流
+            fs.Flush();
+            fs.Close();
         }
 
-        private void ButtonUpload()
+
+        private void webBrowser1_Resize(object sender, EventArgs e)
         {
-            DataTable TotalDT = (DataTable)dataGridView1.DataSource;
-            if (TotalDT == null)
-            {
-                return;
-            }
+            this.webBrowser1.Refresh();
+        } 
+        #endregion
 
-            DataTable gridSelectDT = TotalDT.Clone();
-            string goods_sn = "";
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
-                if (checkCell != null && ((bool)checkCell.EditingCellFormattedValue == true || (bool)checkCell.FormattedValue == true))
-                {
-                    DataRow dr = (dataGridView1.Rows[i].DataBoundItem as DataRowView).Row;
-                    object[] obj = dr.ItemArray;
-                    gridSelectDT.Rows.Add(obj);
-                    goods_sn += "'" + dr["goods_sn"].ToString() + "',";
-                }
-            }
-            if (gridSelectDT.Rows.Count > 0)
-            {
-                DialogResult dr = MessageBox.Show("您确定上传商品吗？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                if (dr != DialogResult.OK)
-                {
-                    return;
-                }
-                Program.mfloadflag = "";
-                FormRefresh frm = new FormRefresh(bgwupload);
-                frm.setplocation(310);
-                frm.WindowState = FormWindowState.Normal;
-                frm.setprogress(0, gridSelectDT.Rows.Count);
-                uploadobj obj = new uploadobj();
-                obj.frm = frm;
-                obj.goodssn = goods_sn;
-                obj.dt = gridSelectDT;
-                bgwupload.RunWorkerAsync(obj);
-                frm.ShowDialog();
-            }
-            else
-            {
-                MessageBox.Show("请勾选需要上传的商品？", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
+        #region 商品通用信息选择商品分类相关操作
 
         private void tvcat_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -1390,6 +1444,7 @@ namespace GCollection
             }
             if (e.Node.GetNodeCount(true) < 1)
             {
+                tvcat.SelectedNode = e.Node;
                 txtgoodscate.Text = e.Node.Text;
                 txtgoodscate.Tag = e.Node.Tag;
                 tvcat.CollapseAll();
@@ -1417,12 +1472,47 @@ namespace GCollection
                 tvcat.Hide();
             }
         }
+        #endregion
 
-        private void toolStripButton7_Click(object sender, EventArgs e)
+        #region 商品分类树操作
+
+        /// <summary>
+        /// 商品分类树操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            Relcate rc = new Relcate(spr);
-            rc.Loaderdata(dtcateali, dtcate, diccatedata);
-            rc.ShowDialog(this);
+            querytype = 0;
+            if (e.Node.GetNodeCount(true) < 1)
+            {
+                dataPage1.CurrentPage = 1;
+                dataPage1.PageCount = 0;
+                dataPage1.TotalCount = 0;
+                dataPage1.PageSize = 20;
+                treeView1.SelectedNode = e.Node;
+                int catid = Convert.ToInt32(e.Node.Tag);
+                int c = spr.opgcc.Hasgoods(catid);
+                string[] strArray = e.Node.Text.Split('('); //字符串转数组
+                e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
+                dataPage1_EventPaging(null);
+            }
+            else if (e.Node.Parent == null)
+            {
+                int c = spr.opgcc.Hasallgoods();
+                string[] strArray = e.Node.Text.Split('('); //字符串转数组
+                e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
+                SetDatagridviewEmpty();
+            }
+            else
+            {
+                string catid = e.Node.Tag.ToString();
+                if (dicgoodscount.Keys.Contains(catid))
+                {
+                    e.Node.Text = diccatedata[catid] + "(" + dicgoodscount[catid] + ")";
+                }
+                SetDatagridviewEmpty();
+            }
         }
 
         private void bgwrefreshgoods_DoWork(object sender, DoWorkEventArgs e)
@@ -1470,206 +1560,20 @@ namespace GCollection
             //}
             Program.mfloadflag = "OK";
         }
+
+        /// <summary>
+        /// 刷新商品分类数量
+        /// </summary>
         public void Refreshgoodscount()
         {
             bgwrefreshgoods.RunWorkerAsync();
         }
 
-        private void listBox1_Leave(object sender, EventArgs e)
-        {
-            //this.member = "";
-            //this.suppliername = "";
-        }
-
-        private void btnsuppsousou_Click(object sender, EventArgs e)
-        {
-            if (txtsuppsousou.Text.Trim() != "")
-            {
-                string soutext = txtsuppsousou.Text.Trim();
-                Setlistselected(soutext);
-            }
-        }
-
-        private void Setlistselected(string text)
-        {
-            dicquerysupp.Clear();
-            listBox1.SelectedItem = null;
-            for (int i = 0; i < listBox1.Items.Count; i++)
-            {
-                string company = ((DataRowView)listBox1.Items[i])["company"].ToString();
-                if (company.Contains(text))
-                {
-                    dicquerysupp.Add(i, company);
-                }
-            }
-            if (dicquerysupp.Keys.Count > 0)
-            {
-                if (listBox1.TopIndex == dicquerysupp.Keys.First())
-                {
-                    listBox1.Refresh();
-                    //listBox1.TopIndex = dicquerysupp.Keys.First();
-                }
-                else
-                {
-                    // listBox1.Refresh();
-                    listBox1.TopIndex = dicquerysupp.Keys.First();
-                }
-            }
-            else
-            {
-                if (listBox1.TopIndex == 0)
-                {
-                    listBox1.Refresh();
-                }
-                else
-                {
-                    listBox1.TopIndex = 0;
-                }
-            }
-        }
-        Dictionary<int, string> dicquerysupp = new Dictionary<int, string>();
-
-        private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            if (e.Index < 0)
-            {
-                return;
-            }
-            Color vColor = e.ForeColor;
-            string s = (((ListBox)sender).Items[e.Index] as DataRowView)["company"].ToString();
-            if (dicquerysupp.Values.Contains(s))
-            {
-                vColor = Color.Red;
-            }
-            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
-            {
-                e.Graphics.FillRectangle(new SolidBrush(Color.Blue), e.Bounds);
-                //e.Graphics.DrawString(s, e.Font, new SolidBrush(Color.White), e.Bounds);
-                TextRenderer.DrawText(e.Graphics, s, e.Font, e.Bounds, Color.White, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
-            }
-            else
-            {
-                e.Graphics.FillRectangle(new SolidBrush(e.BackColor), e.Bounds);
-                //e.Graphics.DrawString(s, e.Font,new SolidBrush(vColor), e.Bounds);
-                TextRenderer.DrawText(e.Graphics, s, e.Font, e.Bounds, vColor, TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
-                e.DrawFocusRectangle();
-            }
-        }
-
-        private void dataGridView1_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex != (dataGridView1.CurrentRow==null?  -1: dataGridView1.CurrentRow.Index))
-            {
-                string goods_sn = this.dataGridView1.Rows[e.RowIndex].Cells["goods_sn"].Value.ToString();
-                txtgoodstitle.Text = this.dataGridView1.Rows[e.RowIndex].Cells["goods_name"].Value.ToString();
-                txtsellprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["market_price"].Value.ToString();
-                txtprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["shop_price"].Value.ToString();
-                cmbbrand.SelectedValue = this.dataGridView1.Rows[e.RowIndex].Cells["brand_id"].Value.ToString();
-                txtjifenjiner.Text = this.dataGridView1.Rows[e.RowIndex].Cells["integral"].Value.ToString();
-                string img = this.dataGridView1.Rows[e.RowIndex].Cells["goods_thumb"].Value.ToString();
-                if (img != string.Empty)
-                {
-                    string picurl = GetGoodsImgUrl(img);
-                    pictureBox1.ImageLocation = picurl; ;
-                }
-                this.content = dataGridView1.Rows[e.RowIndex].Cells["goods_desc"].Value.ToString();
-                SetDetailContent(content);
-
-                string dd = this.dataGridView1.Rows[e.RowIndex].Cells["cat_id"].Value.ToString();
-                txtgoodscate.Text = (diccatedata.Keys.Contains(dd) == true) ? diccatedata[dd] : "";
-                txtgoodscate.Tag = dd;
-            }
-        }
-
         /// <summary>
-        /// 获取商品原图地址URL
+        /// 属性商品分类数量按钮
         /// </summary>
-        /// <param name="spath"></param>
-        /// <returns></returns>
-        private string GetGoodsImgUrl(string spath)
-        {
-            int p2 = spath.LastIndexOf('.');
-            int p1 = spath.IndexOf('.');
-            string picurl = "";
-            if (p1 != p2)
-            {
-                picurl = spath.Substring(0, p1) + "." + spath.Substring(p2 + 1);
-            }
-            else
-            {
-                picurl = spath;
-            }
-
-            string url = "https://cbu01.alicdn.com/";
-            if (!picurl.Contains("https://"))
-            {
-                picurl = url + picurl;
-            }
-            return picurl;
-        }
-
-        /// <summary>
-        /// 保存图片到本地
-        /// </summary>
-        /// <param name="img"></param>
-        /// <param name="imgname"></param>
-        private void SaveImg(Image img, string imgname)
-        {
-            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + @"image\"))
-            {
-                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"image\");
-            }
-            string tempFileName = AppDomain.CurrentDomain.BaseDirectory + @"image\" + imgname + ".jpg";
-            img.Save(tempFileName, img.RawFormat);
-        }
-
-
-        private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            btnview.PerformClick();
-        }
-
-        private void txtsuppsousou_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyValue == 13)
-            {
-                btnsuppsousou.PerformClick();
-            }
-        }
-
-        private void txtsuppsousou_Enter(object sender, EventArgs e)
-        {
-            if (txtsuppsousou.Text.Trim() == "请输入供应商名称")
-            {
-                txtsuppsousou.Text = "";
-                txtsuppsousou.ForeColor = SystemColors.WindowText;
-            }
-        }
-
-        private void txtsuppsousou_Leave(object sender, EventArgs e)
-        {
-            if (txtsuppsousou.Text.Trim() == "")
-            {
-                txtsuppsousou.ForeColor = Color.Gainsboro;
-                txtsuppsousou.Text = "请输入供应商名称";
-            }
-
-        }
-
-        private void dataGridView1_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-        {
-            if (dataGridView1.IsCurrentCellDirty)
-            {
-                dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            }
-        }
-
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            FormBatch frm = new FormBatch(dtbrand, dtcate, spr);
-            frm.ShowDialog(this);
-        }
-
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnrefreshcount_Click(object sender, EventArgs e)
         {
             Program.mfloadflag = "";
@@ -1679,49 +1583,79 @@ namespace GCollection
             frm.WindowState = FormWindowState.Normal;
             frm.ShowDialog();
         }
+        #endregion
 
-        private void btnproductprice_Click(object sender, EventArgs e)
+        #region 上传商品操作
+        /// <summary>
+        /// 上传商品按钮操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
+            ButtonUpload();
+        }
+
+        class uploadobj
+        {
+            public DataTable dt;
+            public string goodssn;
+            public FormRefresh frm;
+        }
+
+        /// <summary>
+        /// 上传商品方法
+        /// </summary>
+        private void ButtonUpload()
+        {
+            DataTable TotalDT = (DataTable)dataGridView1.DataSource;
+            if (TotalDT == null)
             {
                 return;
             }
-            int rindex = dataGridView1.CurrentRow.Index;
-            string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString ();
-            DataTable dt=  spr.opgcc.QueryGoodsbyProductid(productid);
-            if (dt != null && dt.Rows.Count > 0)
+
+            DataTable gridSelectDT = TotalDT.Clone();
+            string goods_sn = "";
+            for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
-                string skuinfo = dt.Rows[0]["skuInfos"].ToString();
-                string shopprice = dt.Rows[0]["extendinfos"].ToString();
-                string skumodelstr = dt.Rows[0]["skumodelstr"].ToString();
-                if (skuinfo == "" || skuinfo == null || skuinfo == "null")
+                DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
+                if (checkCell != null && ((bool)checkCell.EditingCellFormattedValue == true || (bool)checkCell.FormattedValue == true))
+                {
+                    DataRow dr = (dataGridView1.Rows[i].DataBoundItem as DataRowView).Row;
+                    object[] obj = dr.ItemArray;
+                    gridSelectDT.Rows.Add(obj);
+                    goods_sn += "'" + dr["goods_sn"].ToString() + "',";
+                }
+            }
+            if (gridSelectDT.Rows.Count > 0)
+            {
+                DialogResult dr = MessageBox.Show("您确定上传商品吗？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (dr != DialogResult.OK)
                 {
                     return;
                 }
-                else
-                {
-                    string proxyprice = dataGridView1.CurrentRow.Cells["shop_price"].Value.ToString();
-                    FormProductPrice frm = new FormProductPrice(productid, skuinfo, shopprice, skumodelstr, proxyprice);
-                    frm.ShowDialog(this);
-                }
+                Program.mfloadflag = "";
+                FormRefresh frm = new FormRefresh(bgwupload);
+                frm.setplocation(310);
+                frm.WindowState = FormWindowState.Normal;
+                frm.setprogress(0, gridSelectDT.Rows.Count);
+                uploadobj obj = new uploadobj();
+                obj.frm = frm;
+                obj.goodssn = goods_sn;
+                obj.dt = gridSelectDT;
+                bgwupload.RunWorkerAsync(obj);
+                frm.ShowDialog();
             }
-        }
-
-        private void listBox1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar == 13)
+            else
             {
-                if (this.member != "" && listBox1.SelectedItem != null)
-                {
-                    toolStripButton3.PerformClick();
-                }
+                MessageBox.Show("请勾选需要上传的商品!", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         /// <summary>
         /// 上传商品到大商创
         /// </summary>
-        private void uploaddsc(Dictionary<string,string>dic)
+        private void uploaddsc(Dictionary<string, string> dic)
         {
             int is_best = 0;//精品
             int is_new = 0;//新品
@@ -1743,7 +1677,7 @@ namespace GCollection
             string skumodelstr = dic["skumodelstr"];
             string detailpara = dic["detailpara"];
             string desction = dic["desction"];
-            string[]  imglst= imagelist.Split(',');
+            string[] imglst = imagelist.Split(',');
             category_id = int.Parse(dic["category_id"]);
             shop_price = float.Parse(dic["shop_price"]);
             market_price = float.Parse(dic["market_price"]);
@@ -1761,14 +1695,14 @@ namespace GCollection
             if (saleobj["quoteType"].ToString() == "0")
             {
                 cat_id = 0;
-                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best,is_new,is_hot,shop_price, market_price, amountonsale,brand_id);
+                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best, is_new, is_hot, shop_price, market_price, amountonsale, brand_id);
                 Dictionary<string, JObject> uploadimg = gr.updategoodsdesc(goods_id, imglst, desction);
                 gr.dspec.GoodDetailPara(detailpara, goods_id, cat_id);
             }
             else
             {
                 cat_id = gr.setgoodstypecat(productid + "_" + producttitle);
-                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best, is_new, is_hot,shop_price, market_price, amountonsale, brand_id);
+                int goods_id = gr.setgoods(category_id, producttitle, productid, cat_id, is_on_sale, is_shipping, is_best, is_new, is_hot, shop_price, market_price, amountonsale, brand_id);
                 Dictionary<string, JObject> uploadimg = gr.updategoodsdesc(goods_id, imglst, desction);
                 gr.setspec(skumodelstr, skuinfos, goods_id, cat_id, uploadimg);
                 gr.dspec.GoodDetailPara(detailpara, goods_id, cat_id);
@@ -1828,19 +1762,241 @@ namespace GCollection
         {
             if (e.Error != null)
             {
-                MessageBox.Show("出错啦");
+                MessageBox.Show("出错啦", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else if (e.Cancelled)
             {
-                MessageBox.Show("已取消");
+                MessageBox.Show("已取消", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("上传完成！");
+                MessageBox.Show("上传完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             dataPage1_EventPaging(null);
             Program.mfloadflag = "OK";
         }
+        #endregion
 
+        /// <summary>
+        /// 关联分类
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+            Relcate rc = new Relcate(spr);
+            rc.Loaderdata(dtcateali, dtcate, diccatedata);
+            rc.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// 商品批量修改
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            FormBatch frm = new FormBatch(dtbrand, dtcate, spr);
+            frm.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// 批量删除商品
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            DataTable TotalDT = (DataTable)dataGridView1.DataSource;
+            if (TotalDT == null)
+            {
+                return;
+            }
+            string pids = "";
+            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            {
+                DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
+                if (checkCell != null && ((bool)checkCell.EditingCellFormattedValue == true || (bool)checkCell.FormattedValue == true))
+                {
+                    pids += "'" + this.dataGridView1.Rows[i].Cells["goods_sn"].Value.ToString() + "',";
+                }
+            }
+            if (pids != "")
+            {
+                DialogResult dr = MessageBox.Show("您确定删除吗？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                if (dr != DialogResult.OK)
+                {
+                    return;
+                }
+                pids = pids.TrimEnd(',');
+                bool b = spr.opgcc.deleteproductbyid(pids);
+                if (b)
+                {
+                    MessageBox.Show("删除完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dataPage1_EventPaging(null);
+                    Refreshgoodscount();
+                }
+            }
+            else
+            {
+                MessageBox.Show("请勾选需要删除的商品!", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        /// <summary>
+        /// 单个修改商品
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnsave_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
+            {
+                return;
+            }
+            int rindex = dataGridView1.CurrentRow.Index;
+            DataRow dr = (dataGridView1.Rows[rindex].DataBoundItem as DataRowView).Row;
+            Product pt = new Product();
+
+            if (string.Empty == txtgoodstitle.Text.Trim())
+            {
+                return;
+            }
+
+            if (string.Empty == txtsellprice.Text.Trim())
+            {
+                return;
+            }
+
+            if (string.Empty == txtprice.Text.Trim())
+            {
+                return;
+            }
+
+            if (string.Empty == txtjifenjiner.Text.Trim())
+            {
+                return;
+            }
+
+            pt.Goods_name = txtgoodstitle.Text.Trim();
+            pt.Market_price = Convert.ToDecimal(txtsellprice.Text.Trim());
+            pt.Shop_price = Convert.ToDecimal(txtprice.Text.Trim());
+            pt.Integral = Convert.ToInt32(txtjifenjiner.Text.Trim());
+            pt.Cat_id = Convert.ToInt32((txtgoodscate.Tag == null || txtgoodscate.Tag.ToString() == "") ? "0" : txtgoodscate.Tag.ToString());
+            pt.Brand_id = Convert.ToInt32((cmbbrand.SelectedValue == null || cmbbrand.SelectedValue.ToString() == "") ? "0" : cmbbrand.SelectedValue.ToString());
+            pt.Goods_number = Convert.ToUInt16(dr["goods_number"]);
+            pt.Goods_weight = Convert.ToDecimal(dr["goods_weight"]);
+            pt.Is_best = Convert.ToInt16(dr["is_best"]);
+            pt.Is_new = Convert.ToInt16(dr["is_new"]);
+            pt.Is_hot = Convert.ToInt16(dr["is_hot"]);
+            pt.Is_shipping = Convert.ToInt16(dr["is_shipping"]);
+            pt.Is_on_sale = Convert.ToInt16(dr["is_on_sale"]);
+            pt.Goods_desc = this.content;
+            pt.Goods_sn = dr["goods_sn"].ToString();
+            bool b = spr.opgcc.UpdateProduct(pt);
+            if (b)
+            {
+                //dataGridView1.CurrentRow.Cells["goods_name"].Value = pt.Goods_name;
+                //dataGridView1.CurrentRow.Cells["market_price"].Value = pt.Market_price;
+                //dataGridView1.CurrentRow.Cells["shop_price"].Value = pt.Shop_price;
+                //dataGridView1.CurrentRow.Cells["cat_id"].Value = pt.Cat_id;
+                //dataGridView1.CurrentRow.Cells["brand_id"].Value = pt.Brand_id;
+                //dataGridView1.CurrentRow.Cells["goods_desc"].Value = pt.Goods_desc;
+                //dataGridView1.CurrentRow.Cells["integral"].Value = pt.Integral;
+                //if (pt.Brand_id > 0)
+                //{
+                //    dataGridView1.CurrentRow.Cells["brand_name"].Value = cmbbrand.Text.ToString();
+                //}
+                //else
+                //{
+                //    dataGridView1.CurrentRow.Cells["brand_name"].Value = "";
+                //}
+                dataPage1_EventPaging(null);
+                Refreshgoodscount();
+                MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        /// <summary>
+        /// 只能输入数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TxtDigit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar != 8 && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// 只能输入浮点数
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TxtFloat_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar != 8 && !Char.IsDigit(e.KeyChar) && e.KeyChar != 0x2E)
+            {
+                e.Handled = true;
+            }
+
+            if (e.KeyChar == '.')   //允许输入回退键
+            {
+                TextBox tb = sender as TextBox;
+
+                if (tb.Text == "")
+                {
+                    tb.Text = "0.";
+                    tb.Select(tb.Text.Length, 0);
+                    e.Handled = true;
+                }
+                else if (tb.Text.Contains("."))
+                {
+                    e.Handled = true;
+                }
+                else
+                {
+                    e.Handled = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 设置商品货品价格
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnproductprice_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
+            {
+                return;
+            }
+            int rindex = dataGridView1.CurrentRow.Index;
+            string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString ();
+            DataTable dt=  spr.opgcc.QueryGoodsbyProductid(productid);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                string skuinfo = dt.Rows[0]["skuInfos"].ToString();
+                if (skuinfo == "" || skuinfo == null || skuinfo == "null")
+                {
+                    MessageBox.Show("普通商品，没有规格价格。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                else
+                {
+                    string proxyprice = dataGridView1.CurrentRow.Cells["shop_price"].Value.ToString();
+                    FormProductPrice frm = new FormProductPrice(dt.Rows[0], proxyprice);
+                    frm.ShowDialog(this);
+                }
+            }
+        }
+
+        private void MForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            System.Environment.Exit(0);
+        }
     }
 }

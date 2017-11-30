@@ -15,23 +15,29 @@ namespace GCollection
     public partial class FormProductPrice : Form
     {
         string skuinfo = "";
-        string shop_price = "";
+        string extendinfos = "";
         string proxyprice = "";
         string skumodelstr = "";
         string productid = "";
+        string saleinfo = "";
+        public FormProductPrice(DataRow dr,string pprice)
+        {
+            InitializeComponent();
+            if (dr != null)
+            {
+                productid = dr["productID"].ToString ();
+                skuinfo = dr["skuInfos"].ToString();
+                extendinfos = dr["extendinfos"].ToString();
+                skumodelstr = dr["skumodelstr"].ToString();
+                saleinfo = dr["saleinfo"].ToString();
+            }
+            proxyprice = pprice;
+        }
+
         public FormProductPrice()
         {
             InitializeComponent();
-        }
 
-        public FormProductPrice(string pid,string s, string p,string skustr,string proxy)
-        {
-            InitializeComponent();
-            productid = pid;
-            skuinfo = s;
-            shop_price = p;
-            skumodelstr = skustr;
-            proxyprice = proxy;
         }
         JArray sm = null;
         JArray skuprice = null;
@@ -46,9 +52,9 @@ namespace GCollection
             }
             sm = (JArray)JsonConvert.DeserializeObject(skuinfo);
 
-            if (shop_price != null && shop_price != "" && shop_price != "null")
+            if (extendinfos != null && extendinfos != "" && extendinfos != "null")
             {
-                skuprice = (JArray)JsonConvert.DeserializeObject(shop_price);
+                skuprice = (JArray)JsonConvert.DeserializeObject(extendinfos);
                 foreach (JToken p in skuprice.Children())
                 {
                     if (p["key"].ToString().ToLower() == "consign_price")
@@ -75,16 +81,19 @@ namespace GCollection
             }
             if (dicskuprice.Count < 1)
             {
-                JObject jskustr = (JObject)JsonConvert.DeserializeObject(skumodelstr);
-                JToken jt = jskustr["skuList"];
-                foreach (JToken j in jt.Children())
+                if (skumodelstr != "")
                 {
-                    string pprice = j["proxyPrice"].ToString();
-                    string rprice = j["retailPrice"].ToString();
-                    string skuid = j["skuId"].ToString();
-                    if (!dicskuprice.ContainsKey(skuid))
+                    JObject jskustr = (JObject)JsonConvert.DeserializeObject(skumodelstr);
+                    JToken jt = jskustr["skuList"];
+                    foreach (JToken j in jt.Children())
                     {
-                        dicskuprice.Add(skuid, pprice);
+                        string pprice = j["proxyPrice"].ToString();
+                        string rprice = j["retailPrice"].ToString();
+                        string skuid = j["skuId"].ToString();
+                        if (!dicskuprice.ContainsKey(skuid))
+                        {
+                            dicskuprice.Add(skuid, pprice);
+                        }
                     }
                 }
             }
@@ -144,6 +153,7 @@ namespace GCollection
             pl.Top = top;
 
             Label lblsku = new Label();
+            lblsku.AutoEllipsis = true;
             lblsku.Width = 200;
             lblsku.Text = sku;
             lblsku.Left = 50;
@@ -220,7 +230,7 @@ namespace GCollection
             string skustr=JsonConvert.SerializeObject(jskustr);
             Opergcc oper = new Opergcc();
             oper.SaveSkumodelstrAndsaleinfos(productid, skustr, skuinfos);
-            MessageBox.Show("OK");
+            MessageBox.Show("OK", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

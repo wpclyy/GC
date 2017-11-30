@@ -55,6 +55,8 @@
             this.btnrefreshcount = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.lblsuppliercount = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.btnsuppsousou = new System.Windows.Forms.Button();
             this.txtsuppsousou = new System.Windows.Forms.TextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
@@ -88,12 +90,21 @@
             this.ckbbest = new System.Windows.Forms.CheckBox();
             this.ckball = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.bgloadcate = new System.ComponentModel.BackgroundWorker();
+            this.bgwcaiji = new System.ComponentModel.BackgroundWorker();
+            this.bgwcate = new System.ComponentModel.BackgroundWorker();
+            this.bgwloadsupplier = new System.ComponentModel.BackgroundWorker();
+            this.bgwsign = new System.ComponentModel.BackgroundWorker();
+            this.bgwsupplier = new System.ComponentModel.BackgroundWorker();
+            this.bgwrefreshgoods = new System.ComponentModel.BackgroundWorker();
+            this.bgwupload = new System.ComponentModel.BackgroundWorker();
+            this.dataPage1 = new GCollection.DataPage();
             this.colcheck = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.xuhao = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_sn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.brand_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.brand_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.catname = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_weight = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -104,20 +115,12 @@
             this.is_hot = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.is_shipping = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.is_on_sale = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.brand_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cat_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.catid = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_thumb = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.integral = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bgloadcate = new System.ComponentModel.BackgroundWorker();
-            this.bgwcaiji = new System.ComponentModel.BackgroundWorker();
-            this.bgwcate = new System.ComponentModel.BackgroundWorker();
-            this.bgwloadsupplier = new System.ComponentModel.BackgroundWorker();
-            this.bgwsign = new System.ComponentModel.BackgroundWorker();
-            this.bgwsupplier = new System.ComponentModel.BackgroundWorker();
-            this.bgwrefreshgoods = new System.ComponentModel.BackgroundWorker();
-            this.bgwupload = new System.ComponentModel.BackgroundWorker();
-            this.dataPage1 = new GCollection.DataPage();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -321,6 +324,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.lblsuppliercount);
+            this.tabPage2.Controls.Add(this.label5);
             this.tabPage2.Controls.Add(this.btnsuppsousou);
             this.tabPage2.Controls.Add(this.txtsuppsousou);
             this.tabPage2.Controls.Add(this.listBox1);
@@ -331,6 +336,26 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "供应商";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // lblsuppliercount
+            // 
+            this.lblsuppliercount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblsuppliercount.AutoSize = true;
+            this.lblsuppliercount.Location = new System.Drawing.Point(83, 573);
+            this.lblsuppliercount.Name = "lblsuppliercount";
+            this.lblsuppliercount.Size = new System.Drawing.Size(23, 12);
+            this.lblsuppliercount.TabIndex = 4;
+            this.lblsuppliercount.Text = "0个";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 573);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(77, 12);
+            this.label5.TabIndex = 3;
+            this.label5.Text = "供应商总计：";
             // 
             // btnsuppsousou
             // 
@@ -369,18 +394,17 @@
             this.listBox1.ItemHeight = 20;
             this.listBox1.Location = new System.Drawing.Point(3, 35);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(226, 544);
+            this.listBox1.Size = new System.Drawing.Size(226, 524);
             this.listBox1.TabIndex = 0;
             this.listBox1.ValueMember = "memberId";
             this.listBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseClick);
             this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox1_DrawItem);
             this.listBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.listBox1_KeyPress);
-            this.listBox1.Leave += new System.EventHandler(this.listBox1_Leave);
             // 
             // btnsave
             // 
             this.btnsave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnsave.Location = new System.Drawing.Point(745, 595);
+            this.btnsave.Location = new System.Drawing.Point(755, 596);
             this.btnsave.Name = "btnsave";
             this.btnsave.Size = new System.Drawing.Size(56, 25);
             this.btnsave.TabIndex = 3;
@@ -391,7 +415,7 @@
             // btnview
             // 
             this.btnview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnview.Location = new System.Drawing.Point(661, 595);
+            this.btnview.Location = new System.Drawing.Point(671, 596);
             this.btnview.Name = "btnview";
             this.btnview.Size = new System.Drawing.Size(56, 25);
             this.btnview.TabIndex = 2;
@@ -722,7 +746,7 @@
             this.status,
             this.goods_sn,
             this.goods_name,
-            this.brand_id,
+            this.brand_name,
             this.catname,
             this.goods_number,
             this.goods_weight,
@@ -733,6 +757,7 @@
             this.is_hot,
             this.is_shipping,
             this.is_on_sale,
+            this.brand_id,
             this.cat_id,
             this.catid,
             this.goods_thumb,
@@ -766,6 +791,77 @@
             this.dataGridView1.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridView1_CurrentCellDirtyStateChanged);
             this.dataGridView1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
+            // 
+            // bgloadcate
+            // 
+            this.bgloadcate.WorkerReportsProgress = true;
+            this.bgloadcate.WorkerSupportsCancellation = true;
+            this.bgloadcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgloadcate_DoWork);
+            this.bgloadcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgloadcate_RunWorkerCompleted);
+            // 
+            // bgwcaiji
+            // 
+            this.bgwcaiji.WorkerReportsProgress = true;
+            this.bgwcaiji.WorkerSupportsCancellation = true;
+            this.bgwcaiji.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcaiji_DoWork);
+            this.bgwcaiji.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcaiji_RunWorkerCompleted);
+            // 
+            // bgwcate
+            // 
+            this.bgwcate.WorkerReportsProgress = true;
+            this.bgwcate.WorkerSupportsCancellation = true;
+            this.bgwcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcate_DoWork);
+            this.bgwcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcate_RunWorkerCompleted);
+            // 
+            // bgwloadsupplier
+            // 
+            this.bgwloadsupplier.WorkerReportsProgress = true;
+            this.bgwloadsupplier.WorkerSupportsCancellation = true;
+            this.bgwloadsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwloadsupplier_DoWork);
+            this.bgwloadsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwloadsupplier_RunWorkerCompleted);
+            // 
+            // bgwsign
+            // 
+            this.bgwsign.WorkerReportsProgress = true;
+            this.bgwsign.WorkerSupportsCancellation = true;
+            this.bgwsign.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsign_DoWork);
+            this.bgwsign.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsign_RunWorkerCompleted);
+            // 
+            // bgwsupplier
+            // 
+            this.bgwsupplier.WorkerReportsProgress = true;
+            this.bgwsupplier.WorkerSupportsCancellation = true;
+            this.bgwsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsupplier_DoWork);
+            this.bgwsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsupplier_RunWorkerCompleted);
+            // 
+            // bgwrefreshgoods
+            // 
+            this.bgwrefreshgoods.WorkerReportsProgress = true;
+            this.bgwrefreshgoods.WorkerSupportsCancellation = true;
+            this.bgwrefreshgoods.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwrefreshgoods_DoWork);
+            this.bgwrefreshgoods.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwrefreshgoods_RunWorkerCompleted);
+            // 
+            // bgwupload
+            // 
+            this.bgwupload.WorkerReportsProgress = true;
+            this.bgwupload.WorkerSupportsCancellation = true;
+            this.bgwupload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwupload_DoWork);
+            this.bgwupload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwupload_RunWorkerCompleted);
+            // 
+            // dataPage1
+            // 
+            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.dataPage1.CurrentPage = 1;
+            this.dataPage1.Location = new System.Drawing.Point(1, 226);
+            this.dataPage1.Name = "dataPage1";
+            this.dataPage1.PageCount = 0;
+            this.dataPage1.PageSize = 10;
+            this.dataPage1.Size = new System.Drawing.Size(935, 31);
+            this.dataPage1.TabIndex = 1;
+            this.dataPage1.TotalCount = 0;
+            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
             // 
             // colcheck
             // 
@@ -814,14 +910,12 @@
             this.goods_name.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.goods_name.Width = 59;
             // 
-            // brand_id
+            // brand_name
             // 
-            this.brand_id.DataPropertyName = "brand_id";
-            this.brand_id.HeaderText = "品牌";
-            this.brand_id.Name = "brand_id";
-            this.brand_id.ReadOnly = true;
-            this.brand_id.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.brand_id.Width = 63;
+            this.brand_name.DataPropertyName = "brand_name";
+            this.brand_name.HeaderText = "品牌";
+            this.brand_name.Name = "brand_name";
+            this.brand_name.ReadOnly = true;
             // 
             // catname
             // 
@@ -919,6 +1013,16 @@
             this.is_on_sale.TrueValue = "1";
             this.is_on_sale.Width = 63;
             // 
+            // brand_id
+            // 
+            this.brand_id.DataPropertyName = "brand_id";
+            this.brand_id.HeaderText = "品牌ID";
+            this.brand_id.Name = "brand_id";
+            this.brand_id.ReadOnly = true;
+            this.brand_id.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.brand_id.Visible = false;
+            this.brand_id.Width = 63;
+            // 
             // cat_id
             // 
             this.cat_id.DataPropertyName = "cat_id";
@@ -957,77 +1061,6 @@
             this.integral.Name = "integral";
             this.integral.Visible = false;
             // 
-            // bgloadcate
-            // 
-            this.bgloadcate.WorkerReportsProgress = true;
-            this.bgloadcate.WorkerSupportsCancellation = true;
-            this.bgloadcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgloadcate_DoWork);
-            this.bgloadcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgloadcate_RunWorkerCompleted);
-            // 
-            // bgwcaiji
-            // 
-            this.bgwcaiji.WorkerReportsProgress = true;
-            this.bgwcaiji.WorkerSupportsCancellation = true;
-            this.bgwcaiji.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcaiji_DoWork);
-            this.bgwcaiji.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcaiji_RunWorkerCompleted);
-            // 
-            // bgwcate
-            // 
-            this.bgwcate.WorkerReportsProgress = true;
-            this.bgwcate.WorkerSupportsCancellation = true;
-            this.bgwcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcate_DoWork);
-            this.bgwcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcate_RunWorkerCompleted);
-            // 
-            // bgwloadsupplier
-            // 
-            this.bgwloadsupplier.WorkerReportsProgress = true;
-            this.bgwloadsupplier.WorkerSupportsCancellation = true;
-            this.bgwloadsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwloadsupplier_DoWork);
-            this.bgwloadsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwloadsupplier_RunWorkerCompleted);
-            // 
-            // bgwsign
-            // 
-            this.bgwsign.WorkerReportsProgress = true;
-            this.bgwsign.WorkerSupportsCancellation = true;
-            this.bgwsign.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsign_DoWork);
-            this.bgwsign.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsign_RunWorkerCompleted);
-            // 
-            // bgwsupplier
-            // 
-            this.bgwsupplier.WorkerReportsProgress = true;
-            this.bgwsupplier.WorkerSupportsCancellation = true;
-            this.bgwsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsupplier_DoWork);
-            this.bgwsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsupplier_RunWorkerCompleted);
-            // 
-            // bgwrefreshgoods
-            // 
-            this.bgwrefreshgoods.WorkerReportsProgress = true;
-            this.bgwrefreshgoods.WorkerSupportsCancellation = true;
-            this.bgwrefreshgoods.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwrefreshgoods_DoWork);
-            this.bgwrefreshgoods.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwrefreshgoods_RunWorkerCompleted);
-            // 
-            // bgwupload
-            // 
-            this.bgwupload.WorkerReportsProgress = true;
-            this.bgwupload.WorkerSupportsCancellation = true;
-            this.bgwupload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwupload_DoWork);
-            this.bgwupload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwupload_RunWorkerCompleted);
-            // 
-            // dataPage1
-            // 
-            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.dataPage1.CurrentPage = 1;
-            this.dataPage1.Location = new System.Drawing.Point(1, 226);
-            this.dataPage1.Name = "dataPage1";
-            this.dataPage1.PageCount = 0;
-            this.dataPage1.PageSize = 10;
-            this.dataPage1.Size = new System.Drawing.Size(935, 31);
-            this.dataPage1.TabIndex = 1;
-            this.dataPage1.TotalCount = 0;
-            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
-            // 
             // MForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1043,7 +1076,6 @@
             this.Text = "小助手V0.1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MForm_FormClosing);
-            this.Load += new System.EventHandler(this.MForm_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -1130,12 +1162,15 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.Button btnproductprice;
+        private System.ComponentModel.BackgroundWorker bgwupload;
+        private System.Windows.Forms.Label lblsuppliercount;
+        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colcheck;
         private System.Windows.Forms.DataGridViewTextBoxColumn xuhao;
         private System.Windows.Forms.DataGridViewTextBoxColumn status;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_sn;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_name;
-        private System.Windows.Forms.DataGridViewTextBoxColumn brand_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn brand_name;
         private System.Windows.Forms.DataGridViewTextBoxColumn catname;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_number;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_weight;
@@ -1146,11 +1181,11 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn is_hot;
         private System.Windows.Forms.DataGridViewCheckBoxColumn is_shipping;
         private System.Windows.Forms.DataGridViewCheckBoxColumn is_on_sale;
+        private System.Windows.Forms.DataGridViewTextBoxColumn brand_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn cat_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn catid;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_thumb;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_desc;
         private System.Windows.Forms.DataGridViewTextBoxColumn integral;
-        private System.ComponentModel.BackgroundWorker bgwupload;
     }
 }

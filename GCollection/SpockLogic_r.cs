@@ -38,8 +38,8 @@ public   class SpockLogic_r
         /// 本地数据库链接字符串
         /// </summary>
         //  string str = "server=127.0.0.1;user id=root;password=123456;database=gcl";
-        string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
-       // string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
+       // string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
+        string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
 
         public Opergcc opgcc = null;
          
@@ -90,13 +90,31 @@ public   class SpockLogic_r
         /// </summary>
         /// <param name="i"></param>
         /// <param name="pagesize"></param>
-        public void start(int i, int pagesize)
+        public void start(int i, int pagesize,int allpage,int allcount)
         {
             AlibabarelationquerySuppliersParam qspara = new AlibabarelationquerySuppliersParam();
             qspara.setSupplierLoginId("");
             qspara.setCurrentPage(i);
             qspara.setPageSize(pagesize);
             AlibabarelationquerySuppliersResult qsres = instance.send<AlibabarelationquerySuppliersResult>(qspara);
+            if (qsres == null)
+            {
+                if (i < allpage)
+                {
+                    for (int k = 0; k < pagesize; k++)
+                    {
+                        mf.setsprogress();
+                    }
+                }
+                else
+                {
+                    for (int k = 0; k <  allcount-(pagesize*(i-1)); k++)
+                    {
+                        mf.setsprogress();
+                    }
+                }
+                return;
+            }
             Alibabarelationsuppliersresult ssse = qsres.getResult();
             AlibabarelationsupplierModel[] smodel = ssse.getRelationModels();
             DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
@@ -111,13 +129,13 @@ public   class SpockLogic_r
                 memberIds = memberIds.TrimEnd(',');
                 DataSet retSet = new DataSet();
                 retSet = MySqlHelper.GetDataSet(str, "select MemberId from supplier where MemberId  in(" + memberIds + ")");
-                List<System.String> listS = new List<System.String>();
+                List<string> listS = new List<string>();
                 foreach (DataRow row in retSet.Tables[0].Rows)
                 {
                     string s = row["MemberId"].ToString();
                     listS.Add(s);
                 }
-                System.String[] marray = listS.ToArray();
+                string[] marray = listS.ToArray();
 
                 foreach (AlibabarelationsupplierModel m in smodel)
                 {
@@ -153,9 +171,11 @@ public   class SpockLogic_r
             qspara.setCurrentPage(1);
             qspara.setPageSize(1);
             AlibabarelationquerySuppliersResult qsres = instance.send<AlibabarelationquerySuppliersResult>(qspara);
+            if (qsres == null)
+            {
+                return 0;
+            }
             Alibabarelationsuppliersresult ssse = qsres.getResult();
-            AlibabarelationsupplierModel[] smodel = ssse.getRelationModels();
-
             int allcount = ssse.getCount() ?? 0;
             return allcount;
         }
@@ -174,8 +194,6 @@ public   class SpockLogic_r
             allconpara.setPageSize(1);
 
             AlibabadistributorlistForAllConsignmentResult allresult = instance.send<AlibabadistributorlistForAllConsignmentResult>(allconpara);
-
-            AlibabadaixiaoProductInfo[] proinfo = allresult.getProductInfo();
             if (allresult == null)
             {
                 return 0;
@@ -190,7 +208,7 @@ public   class SpockLogic_r
         /// <param name="cpage"></param>
         /// <param name="pagesize"></param>
         /// <param name="member"></param>
-        public void getproductbypage(int cpage, int pagesize, string member,int allcount)
+        public void getproductbypage(int cpage, int pagesize, string member,int allcount,int allpage)
         {
             AlibabadistributorlistForAllConsignmentParam allconpara = new AlibabadistributorlistForAllConsignmentParam();
             allconpara.setKeyword("");
@@ -201,7 +219,20 @@ public   class SpockLogic_r
             AlibabadistributorlistForAllConsignmentResult allresult = instance.send<AlibabadistributorlistForAllConsignmentResult>(allconpara);
             if (allresult == null)
             {
-                mf.setprogress();
+                if (cpage < allpage)
+                {
+                    for (int k = 0; k <pagesize; k++)
+                    {
+                        mf.setprogress();
+                    }
+                }
+                else
+                {
+                    for (int k = 0; k < (allcount - (pagesize * (cpage - 1))); k++)
+                    {
+                        mf.setprogress();
+                    }
+                }
                 return;
             }
 
@@ -217,13 +248,13 @@ public   class SpockLogic_r
                 productids = productids.TrimEnd(',');
                 DataSet retSet = new DataSet();
                 retSet = MySqlHelper.GetDataSet(str, "select productID from productinfo where productID  in(" + productids + ")");
-                List<System.String> listS = new List<System.String>();
+                List<string> listS = new List<string>();
                 foreach (DataRow row in retSet.Tables[0].Rows)
                 {
                     string s = row["productID"].ToString();
                     listS.Add(s);
                 }
-                System.String[] parray = listS.ToArray();
+                string[] parray = listS.ToArray();
 
                 foreach (AlibabadaixiaoProductInfo p in proinfo)
                 {
@@ -243,9 +274,6 @@ public   class SpockLogic_r
                         mf.setprogress();
                     }
                 }
-               // int allcount = allresult.getCount() ?? 0;
-                float dc = (float)allcount / pagesize;
-                int  allpage = (int)Math.Ceiling(dc);
                 if (cpage < allpage)
                 {
                     for (int j = 0; j < pagesize - proinfo.Length; j++)
@@ -329,10 +357,10 @@ public   class SpockLogic_r
                 imagelist = proimg.getImages();
             }
 
-            string proattr = JsonConvert.SerializeObject(proattrs);
-            string skuinfo = JsonConvert.SerializeObject(proskuinfos);
-            string saleinfo = JsonConvert.SerializeObject(prosale);
-            string extendinfos = JsonConvert.SerializeObject(proextens);
+            string proattr = (proattrs!=null)?JsonConvert.SerializeObject(proattrs):"";
+            string skuinfo = (proskuinfos != null) ? JsonConvert.SerializeObject(proskuinfos):"";
+            string saleinfo = (prosale != null) ? JsonConvert.SerializeObject(prosale):"";
+            string extendinfos = (proextens != null) ? JsonConvert.SerializeObject(proextens):"";
 
             // 规格名称和值
             Dictionary<string, List<string>> ht = new Dictionary<string, List<string>>();
@@ -387,72 +415,124 @@ public   class SpockLogic_r
                                        MySqlHelper.CreateInParam("@extendinfos", MySqlDbType.Text,0,extendinfos),
                                     MySqlHelper.CreateInParam("@memberid", MySqlDbType.VarChar,50,memberid)
                                   };
-            MySqlHelper.ExecuteNonQuery(str, CommandType.Text, "INSERT INTO `productinfo`(`productID`,`productTitle`, `desction`,`offerstatus`,`supplystock`," +
+
+            int c= MySqlHelper.ExecuteNonQuery(str, CommandType.Text, "INSERT INTO `productinfo`(`productID`,`productTitle`, `desction`,`offerstatus`,`supplystock`," +
                 "`catId`,`skumodelstr`,`imagelist`,`detailpara`,`skuInfos`,`saleinfo`,`extendinfos`,`memberid`) " +
                 "VALUES (@productID,@productTitle,@desction,@offerstatus,@supplystock,@catId,@skumodelstr,@imagelist,@detailpara,@skuInfos,@saleinfo,@extendinfos,@memberid)", parm);
-            Product pt = new Product();
-            pt.Goods_sn = proid.ToString();
-            pt.Goods_name = p.getProductTitle();
-            pt.Goods_desc = desction;
-            pt.Goods_number = (int)prosale.getAmountOnSale();
-            pt.Cat_id = (int)p.getCatId();
-            pt.Goods_thumb = p.getPicURI();
-
-            int quotytype = (int)prosale.getQuoteType();
-            if (quotytype == 0)
+            if (c > 0)
             {
-                pt.Shop_price = Convert.ToDecimal(p.getMaxPurchasePrice());
-                string sellprice = p.getSellPrice();
-                if (sellprice != "" && sellprice != null)
+                Product pt = new Product();
+                pt.Goods_sn = proid.ToString();
+                pt.Goods_name = p.getProductTitle();
+                pt.Goods_desc = desction;
+                pt.Goods_number = (int)prosale.getAmountOnSale();
+                pt.Cat_id = (int)p.getCatId();
+                pt.Goods_thumb = p.getPicURI();
+
+                int quotytype = (int)prosale.getQuoteType();
+                if (quotytype == 0)
                 {
-                    pt.Market_price = Convert.ToDecimal(sellprice);
+                    pt.Shop_price = Convert.ToDecimal(p.getMaxPurchasePrice());
+                    string sellprice = p.getSellPrice();
+                    if (sellprice != "" && sellprice != null)
+                    {
+                        pt.Market_price = Convert.ToDecimal(sellprice);
+                    }
+                    else
+                    {
+                        decimal dl = 0m;
+                        dl = GetpriceFromSkumodelstr(p);
+                        if (dl > 0)
+                        {
+                            pt.Market_price = dl;
+                        }
+                        else
+                        {
+                            dl = GetpriceFromSaleinfo(prosale);
+                            if (dl > 0)
+                            {
+                                pt.Market_price = dl;
+                            }
+                            else
+                            {
+                                pt.Market_price = pt.Shop_price * 1.2m;
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    if (p.getSkuModelStr() != "")
+                    pt.Shop_price = Convert.ToDecimal(p.getMaxPurchasePrice());
+                    string sellprice = p.getSellPrice();
+                    if (sellprice != "" && sellprice != null)
                     {
-                        JObject sm = (JObject)JsonConvert.DeserializeObject(p.getSkuModelStr());
-                        JToken mm = sm["skuList"];
-                        if (mm.Children().Count() > 0)
+                        string[] sprice = sellprice.Split('~');
+                        if (sprice.Length > 1)
                         {
-                            foreach (JToken j in mm.Children())
-                            {
-                                if (j["retailPrice"].ToString() != "" && j["retailPrice"] != null)
-                                {
-                                    pt.Market_price = Convert.ToDecimal(j["retailPrice"]);
-                                }
-                            }
+                            pt.Market_price = Convert.ToDecimal(sprice[1]);
+                        }
+                        else if (sprice.Length == 1)
+                        {
+                            pt.Market_price = Convert.ToDecimal(sprice[0]);
                         }
                     }
                     else
                     {
-                        pt.Market_price = pt.Shop_price * 1.2m;
+                        decimal dl = 0m;
+                        dl = GetpriceFromSaleinfo(prosale);
+                        if (dl > 0)
+                        {
+                            pt.Market_price = dl;
+                        }
+                        else
+                        {
+                            pt.Market_price = pt.Shop_price * 1.2m;
+                        }
                     }
                 }
+                Savegoods(pt);
             }
-            else
-            {
-                pt.Shop_price = Convert.ToDecimal(p.getMaxPurchasePrice());
-                string sellprice = p.getSellPrice();
-                if (sellprice != "" && sellprice != null)
-                {
-                    string[] sprice = sellprice.Split('~');
-                    if (sprice.Length > 1)
-                    {
-                        pt.Market_price = Convert.ToDecimal(sprice[1]);
-                    }
-                    else if (sprice.Length == 1)
-                    {
-                        pt.Market_price = Convert.ToDecimal(sprice[0]);
-                    }
-                }
-                else
-                {
-                    pt.Market_price = pt.Shop_price * 1.2m;
-                }
-            }
-            Savegoods(pt);
             mf.setprogress();
+        }
+
+        /// <summary>
+        /// 从skumodelstr中获取零售价格
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private decimal GetpriceFromSkumodelstr(AlibabadaixiaoProductInfo p)
+        {
+            decimal dl = 0m;
+            if (p.getSkuModelStr() != null && p.getSkuModelStr() != "")
+            {
+                JObject sm = (JObject)JsonConvert.DeserializeObject(p.getSkuModelStr());
+                JToken mm = sm["skuList"];
+                if (mm.Children().Count() > 0)
+                {
+                    foreach (JToken j in mm.Children())
+                    {
+                        if (j["retailPrice"].ToString() != "" && j["retailPrice"] != null)
+                        {
+                            dl = Convert.ToDecimal(j["retailPrice"]);
+                        }
+                    }
+                }
+            }
+
+            return dl;
+        }
+
+        /// <summary>
+        /// 从saleinfo中获取零售价格
+        /// </summary>
+        /// <param name="prosale"></param>
+        /// <returns></returns>
+        private decimal GetpriceFromSaleinfo(AlibabaproductProductSaleInfo prosale)
+        {
+            decimal dl = 0m;
+            double rprice = prosale.getRetailprice() ?? 0;
+            dl = Convert.ToDecimal(rprice);
+            return dl;
         }
 
         /// <summary>
@@ -509,6 +589,11 @@ public   class SpockLogic_r
             apara.setCategoryID(catid);
             apara.setWebSite("1688");
             AlibabacategorygetResult catres = instance.send<AlibabacategorygetResult>(apara);
+            if (catres == null)
+            {
+                mf.setcprogress();
+                return;
+            }
             AlibabacategoryCategoryInfo[] aci = catres.getCategoryInfo();
 
             string catids = "";
@@ -522,13 +607,13 @@ public   class SpockLogic_r
                 catids = catids.TrimEnd(',');
                 DataSet retSet = new DataSet();
                 retSet = MySqlHelper.GetDataSet(str, "select catid from category where catid  in(" + catids + ")");
-                List<System.String> listS = new List<System.String>();
+                List<string> listS = new List<string>();
                 foreach (DataRow row in retSet.Tables[0].Rows)
                 {
                     string s = row["catid"].ToString();
                     listS.Add(s);
                 }
-                System.String[] marray = listS.ToArray();
+               string[] marray = listS.ToArray();
 
                 foreach (AlibabacategoryCategoryInfo c in aci)
                 {
@@ -568,6 +653,10 @@ public   class SpockLogic_r
             apara.setCategoryID(0);
             apara.setWebSite("1688");
             AlibabacategorygetResult catres = instance.send<AlibabacategorygetResult>(apara);
+            if (catres == null)
+            {
+                return;
+            }
             AlibabacategoryCategoryInfo[] aci = catres.getCategoryInfo();
             long[] cd = aci[0].getChildIDs();
             foreach (long c in cd)
