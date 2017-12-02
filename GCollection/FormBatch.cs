@@ -756,5 +756,14 @@ namespace GCollection
             Querygoods();
         }
 
+        private void btnclose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btnclose1_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

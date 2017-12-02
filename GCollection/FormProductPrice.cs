@@ -232,5 +232,10 @@ namespace GCollection
             oper.SaveSkumodelstrAndsaleinfos(productid, skustr, skuinfos);
             MessageBox.Show("OK", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
+
+        private void btnclose_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

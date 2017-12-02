@@ -34,6 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnsave = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnclose = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,9 +84,9 @@
             // 
             // btnsave
             // 
-            this.btnsave.Location = new System.Drawing.Point(529, 402);
+            this.btnsave.Location = new System.Drawing.Point(416, 405);
             this.btnsave.Name = "btnsave";
-            this.btnsave.Size = new System.Drawing.Size(75, 30);
+            this.btnsave.Size = new System.Drawing.Size(75, 29);
             this.btnsave.TabIndex = 1;
             this.btnsave.Text = "保存";
             this.btnsave.UseVisualStyleBackColor = true;
@@ -102,11 +103,22 @@
             this.label4.TabIndex = 2;
             this.label4.Text = "label4";
             // 
+            // btnclose
+            // 
+            this.btnclose.Location = new System.Drawing.Point(510, 405);
+            this.btnclose.Name = "btnclose";
+            this.btnclose.Size = new System.Drawing.Size(75, 29);
+            this.btnclose.TabIndex = 3;
+            this.btnclose.Text = "关闭";
+            this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
+            // 
             // FormProductPrice
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(609, 439);
+            this.Controls.Add(this.btnclose);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.btnsave);
             this.Controls.Add(this.panel1);
@@ -133,5 +145,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnsave;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnclose;
     }
 }

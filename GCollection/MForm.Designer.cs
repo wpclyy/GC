@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MForm));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("未分类商品");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("全部数据", new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("未分类商品");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("全部数据", new System.Windows.Forms.TreeNode[] {
+            treeNode11});
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -89,16 +89,8 @@
             this.ckbnew = new System.Windows.Forms.CheckBox();
             this.ckbbest = new System.Windows.Forms.CheckBox();
             this.ckball = new System.Windows.Forms.CheckBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.bgloadcate = new System.ComponentModel.BackgroundWorker();
-            this.bgwcaiji = new System.ComponentModel.BackgroundWorker();
-            this.bgwcate = new System.ComponentModel.BackgroundWorker();
-            this.bgwloadsupplier = new System.ComponentModel.BackgroundWorker();
-            this.bgwsign = new System.ComponentModel.BackgroundWorker();
-            this.bgwsupplier = new System.ComponentModel.BackgroundWorker();
-            this.bgwrefreshgoods = new System.ComponentModel.BackgroundWorker();
-            this.bgwupload = new System.ComponentModel.BackgroundWorker();
             this.dataPage1 = new GCollection.DataPage();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.colcheck = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.xuhao = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -121,6 +113,14 @@
             this.goods_thumb = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.goods_desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.integral = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bgloadcate = new System.ComponentModel.BackgroundWorker();
+            this.bgwcaiji = new System.ComponentModel.BackgroundWorker();
+            this.bgwcate = new System.ComponentModel.BackgroundWorker();
+            this.bgwloadsupplier = new System.ComponentModel.BackgroundWorker();
+            this.bgwsign = new System.ComponentModel.BackgroundWorker();
+            this.bgwsupplier = new System.ComponentModel.BackgroundWorker();
+            this.bgwrefreshgoods = new System.ComponentModel.BackgroundWorker();
+            this.bgwupload = new System.ComponentModel.BackgroundWorker();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -232,7 +232,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 653);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 701);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1189, 22);
             this.statusStrip1.TabIndex = 1;
@@ -250,11 +250,12 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.btnproductprice);
             this.splitContainer1.Panel2.Controls.Add(this.btnsave);
             this.splitContainer1.Panel2.Controls.Add(this.btnview);
             this.splitContainer1.Panel2.Controls.Add(this.panel2);
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1189, 626);
+            this.splitContainer1.Size = new System.Drawing.Size(1189, 674);
             this.splitContainer1.SplitterDistance = 240;
             this.splitContainer1.TabIndex = 2;
             // 
@@ -266,7 +267,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(240, 626);
+            this.tabControl1.Size = new System.Drawing.Size(240, 674);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -277,7 +278,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(232, 600);
+            this.tabPage1.Size = new System.Drawing.Size(232, 648);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "商品分类";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -310,15 +311,15 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(3, 30);
             this.treeView1.Name = "treeView1";
-            treeNode1.Name = "节点1";
-            treeNode1.Tag = "0";
-            treeNode1.Text = "未分类商品";
-            treeNode2.Name = "节点0";
-            treeNode2.Tag = "0";
-            treeNode2.Text = "全部数据";
+            treeNode11.Name = "节点1";
+            treeNode11.Tag = "0";
+            treeNode11.Text = "未分类商品";
+            treeNode12.Name = "节点0";
+            treeNode12.Tag = "0";
+            treeNode12.Text = "全部数据";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode2});
-            this.treeView1.Size = new System.Drawing.Size(226, 567);
+            treeNode12});
+            this.treeView1.Size = new System.Drawing.Size(226, 615);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -332,7 +333,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(232, 600);
+            this.tabPage2.Size = new System.Drawing.Size(232, 648);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "供应商";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -341,7 +342,7 @@
             // 
             this.lblsuppliercount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblsuppliercount.AutoSize = true;
-            this.lblsuppliercount.Location = new System.Drawing.Point(83, 573);
+            this.lblsuppliercount.Location = new System.Drawing.Point(83, 621);
             this.lblsuppliercount.Name = "lblsuppliercount";
             this.lblsuppliercount.Size = new System.Drawing.Size(23, 12);
             this.lblsuppliercount.TabIndex = 4;
@@ -351,7 +352,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 573);
+            this.label5.Location = new System.Drawing.Point(6, 621);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(77, 12);
             this.label5.TabIndex = 3;
@@ -394,7 +395,7 @@
             this.listBox1.ItemHeight = 20;
             this.listBox1.Location = new System.Drawing.Point(3, 35);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(226, 524);
+            this.listBox1.Size = new System.Drawing.Size(226, 564);
             this.listBox1.TabIndex = 0;
             this.listBox1.ValueMember = "memberId";
             this.listBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseClick);
@@ -403,10 +404,10 @@
             // 
             // btnsave
             // 
-            this.btnsave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnsave.Location = new System.Drawing.Point(755, 596);
+            this.btnsave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnsave.Location = new System.Drawing.Point(792, 640);
             this.btnsave.Name = "btnsave";
-            this.btnsave.Size = new System.Drawing.Size(56, 25);
+            this.btnsave.Size = new System.Drawing.Size(61, 30);
             this.btnsave.TabIndex = 3;
             this.btnsave.Text = "保存";
             this.btnsave.UseVisualStyleBackColor = true;
@@ -414,10 +415,10 @@
             // 
             // btnview
             // 
-            this.btnview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnview.Location = new System.Drawing.Point(671, 596);
+            this.btnview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnview.Location = new System.Drawing.Point(709, 640);
             this.btnview.Name = "btnview";
-            this.btnview.Size = new System.Drawing.Size(56, 25);
+            this.btnview.Size = new System.Drawing.Size(61, 30);
             this.btnview.TabIndex = 2;
             this.btnview.Text = "预览";
             this.btnview.UseVisualStyleBackColor = true;
@@ -430,9 +431,9 @@
             this.panel2.BackColor = System.Drawing.Color.White;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.tabControl2);
-            this.panel2.Location = new System.Drawing.Point(4, 267);
+            this.panel2.Location = new System.Drawing.Point(3, 293);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(938, 326);
+            this.panel2.Size = new System.Drawing.Size(938, 331);
             this.panel2.TabIndex = 1;
             // 
             // tabControl2
@@ -443,12 +444,12 @@
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(936, 324);
+            this.tabControl2.Size = new System.Drawing.Size(936, 329);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.btnproductprice);
+            this.tabPage3.AutoScroll = true;
             this.tabPage3.Controls.Add(this.cmbbrand);
             this.tabPage3.Controls.Add(this.tvcat);
             this.tabPage3.Controls.Add(this.pictureBox1);
@@ -466,16 +467,17 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(928, 298);
+            this.tabPage3.Size = new System.Drawing.Size(928, 303);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "通用信息";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // btnproductprice
             // 
-            this.btnproductprice.Location = new System.Drawing.Point(89, 241);
+            this.btnproductprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnproductprice.Location = new System.Drawing.Point(598, 640);
             this.btnproductprice.Name = "btnproductprice";
-            this.btnproductprice.Size = new System.Drawing.Size(109, 36);
+            this.btnproductprice.Size = new System.Drawing.Size(89, 30);
             this.btnproductprice.TabIndex = 22;
             this.btnproductprice.Text = "设置货品价格";
             this.btnproductprice.UseVisualStyleBackColor = true;
@@ -611,7 +613,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(928, 298);
+            this.tabPage4.Size = new System.Drawing.Size(928, 303);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "商品描述";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -622,7 +624,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(922, 292);
+            this.webBrowser1.Size = new System.Drawing.Size(922, 297);
             this.webBrowser1.TabIndex = 1;
             this.webBrowser1.Resize += new System.EventHandler(this.webBrowser1_Resize);
             // 
@@ -643,7 +645,7 @@
             this.panel1.Controls.Add(this.dataGridView1);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(939, 263);
+            this.panel1.Size = new System.Drawing.Size(939, 286);
             this.panel1.TabIndex = 0;
             // 
             // ckbshipping
@@ -719,26 +721,41 @@
             this.ckball.UseVisualStyleBackColor = false;
             this.ckball.CheckedChanged += new System.EventHandler(this.ckball_CheckedChanged);
             // 
+            // dataPage1
+            // 
+            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.dataPage1.CurrentPage = 1;
+            this.dataPage1.Location = new System.Drawing.Point(1, 249);
+            this.dataPage1.Name = "dataPage1";
+            this.dataPage1.PageCount = 0;
+            this.dataPage1.PageSize = 10;
+            this.dataPage1.Size = new System.Drawing.Size(935, 31);
+            this.dataPage1.TabIndex = 1;
+            this.dataPage1.TotalCount = 0;
+            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
+            // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle26.BackColor = System.Drawing.SystemColors.Control;
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle26;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle27.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle27.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle27.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle27.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle27.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle27.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle27;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colcheck,
@@ -763,105 +780,34 @@
             this.goods_thumb,
             this.goods_desc,
             this.integral});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle29.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle29.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle29.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle29.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle29;
             this.dataGridView1.Location = new System.Drawing.Point(2, 1);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle30.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle30.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle30.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle30.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle30.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle30;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(937, 221);
+            this.dataGridView1.Size = new System.Drawing.Size(937, 244);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridView1_CurrentCellDirtyStateChanged);
             this.dataGridView1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             this.dataGridView1.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dataGridView1_RowPostPaint);
-            // 
-            // bgloadcate
-            // 
-            this.bgloadcate.WorkerReportsProgress = true;
-            this.bgloadcate.WorkerSupportsCancellation = true;
-            this.bgloadcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgloadcate_DoWork);
-            this.bgloadcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgloadcate_RunWorkerCompleted);
-            // 
-            // bgwcaiji
-            // 
-            this.bgwcaiji.WorkerReportsProgress = true;
-            this.bgwcaiji.WorkerSupportsCancellation = true;
-            this.bgwcaiji.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcaiji_DoWork);
-            this.bgwcaiji.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcaiji_RunWorkerCompleted);
-            // 
-            // bgwcate
-            // 
-            this.bgwcate.WorkerReportsProgress = true;
-            this.bgwcate.WorkerSupportsCancellation = true;
-            this.bgwcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcate_DoWork);
-            this.bgwcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcate_RunWorkerCompleted);
-            // 
-            // bgwloadsupplier
-            // 
-            this.bgwloadsupplier.WorkerReportsProgress = true;
-            this.bgwloadsupplier.WorkerSupportsCancellation = true;
-            this.bgwloadsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwloadsupplier_DoWork);
-            this.bgwloadsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwloadsupplier_RunWorkerCompleted);
-            // 
-            // bgwsign
-            // 
-            this.bgwsign.WorkerReportsProgress = true;
-            this.bgwsign.WorkerSupportsCancellation = true;
-            this.bgwsign.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsign_DoWork);
-            this.bgwsign.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsign_RunWorkerCompleted);
-            // 
-            // bgwsupplier
-            // 
-            this.bgwsupplier.WorkerReportsProgress = true;
-            this.bgwsupplier.WorkerSupportsCancellation = true;
-            this.bgwsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsupplier_DoWork);
-            this.bgwsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsupplier_RunWorkerCompleted);
-            // 
-            // bgwrefreshgoods
-            // 
-            this.bgwrefreshgoods.WorkerReportsProgress = true;
-            this.bgwrefreshgoods.WorkerSupportsCancellation = true;
-            this.bgwrefreshgoods.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwrefreshgoods_DoWork);
-            this.bgwrefreshgoods.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwrefreshgoods_RunWorkerCompleted);
-            // 
-            // bgwupload
-            // 
-            this.bgwupload.WorkerReportsProgress = true;
-            this.bgwupload.WorkerSupportsCancellation = true;
-            this.bgwupload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwupload_DoWork);
-            this.bgwupload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwupload_RunWorkerCompleted);
-            // 
-            // dataPage1
-            // 
-            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.dataPage1.CurrentPage = 1;
-            this.dataPage1.Location = new System.Drawing.Point(1, 226);
-            this.dataPage1.Name = "dataPage1";
-            this.dataPage1.PageCount = 0;
-            this.dataPage1.PageSize = 10;
-            this.dataPage1.Size = new System.Drawing.Size(935, 31);
-            this.dataPage1.TabIndex = 1;
-            this.dataPage1.TotalCount = 0;
-            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
             // 
             // colcheck
             // 
@@ -902,8 +848,8 @@
             // 
             this.goods_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.goods_name.DataPropertyName = "goods_name";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.goods_name.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.goods_name.DefaultCellStyle = dataGridViewCellStyle28;
             this.goods_name.HeaderText = "商品名称";
             this.goods_name.Name = "goods_name";
             this.goods_name.ReadOnly = true;
@@ -1061,12 +1007,68 @@
             this.integral.Name = "integral";
             this.integral.Visible = false;
             // 
+            // bgloadcate
+            // 
+            this.bgloadcate.WorkerReportsProgress = true;
+            this.bgloadcate.WorkerSupportsCancellation = true;
+            this.bgloadcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgloadcate_DoWork);
+            this.bgloadcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgloadcate_RunWorkerCompleted);
+            // 
+            // bgwcaiji
+            // 
+            this.bgwcaiji.WorkerReportsProgress = true;
+            this.bgwcaiji.WorkerSupportsCancellation = true;
+            this.bgwcaiji.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcaiji_DoWork);
+            this.bgwcaiji.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcaiji_RunWorkerCompleted);
+            // 
+            // bgwcate
+            // 
+            this.bgwcate.WorkerReportsProgress = true;
+            this.bgwcate.WorkerSupportsCancellation = true;
+            this.bgwcate.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwcate_DoWork);
+            this.bgwcate.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwcate_RunWorkerCompleted);
+            // 
+            // bgwloadsupplier
+            // 
+            this.bgwloadsupplier.WorkerReportsProgress = true;
+            this.bgwloadsupplier.WorkerSupportsCancellation = true;
+            this.bgwloadsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwloadsupplier_DoWork);
+            this.bgwloadsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwloadsupplier_RunWorkerCompleted);
+            // 
+            // bgwsign
+            // 
+            this.bgwsign.WorkerReportsProgress = true;
+            this.bgwsign.WorkerSupportsCancellation = true;
+            this.bgwsign.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsign_DoWork);
+            this.bgwsign.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsign_RunWorkerCompleted);
+            // 
+            // bgwsupplier
+            // 
+            this.bgwsupplier.WorkerReportsProgress = true;
+            this.bgwsupplier.WorkerSupportsCancellation = true;
+            this.bgwsupplier.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwsupplier_DoWork);
+            this.bgwsupplier.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwsupplier_RunWorkerCompleted);
+            // 
+            // bgwrefreshgoods
+            // 
+            this.bgwrefreshgoods.WorkerReportsProgress = true;
+            this.bgwrefreshgoods.WorkerSupportsCancellation = true;
+            this.bgwrefreshgoods.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwrefreshgoods_DoWork);
+            this.bgwrefreshgoods.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwrefreshgoods_RunWorkerCompleted);
+            // 
+            // bgwupload
+            // 
+            this.bgwupload.WorkerReportsProgress = true;
+            this.bgwupload.WorkerSupportsCancellation = true;
+            this.bgwupload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwupload_DoWork);
+            this.bgwupload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwupload_RunWorkerCompleted);
+            // 
             // MForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1189, 675);
+            this.ClientSize = new System.Drawing.Size(1189, 723);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -1076,6 +1078,7 @@
             this.Text = "小助手V0.1";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MForm_FormClosing);
+            this.Resize += new System.EventHandler(this.MForm_Resize);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);

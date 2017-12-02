@@ -65,7 +65,7 @@ namespace GCollection
                 else
                 {
                     _currentPage = 1;
-                    this.txtcurrentpage.Text = value + "";
+                    this.txtcurrentpage.Text =  "1";
                 }
             }
         }
@@ -164,7 +164,6 @@ namespace GCollection
                 this.CurrentPage = this.PageCount;
             }
             this.EventPaging?.Invoke(new EventArgs());
-            this.txtcurrentpage.Text = this.CurrentPage+"";
             this.lbltotalcount.Text = "总计 " + this.TotalCount + " 条";
             this.lblpagecount.Text = "共 " + this.PageCount + " 页";
             if (this.CurrentPage == 1)

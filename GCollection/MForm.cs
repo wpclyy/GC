@@ -734,7 +734,6 @@ namespace GCollection
             {
                 spro.Close();
             }
-            spr.opgcc.UpdateSupplierGoodscount(this.member);
             listBox1_MouseClick(null, null);
             Refreshgoodscount();
         }
@@ -830,10 +829,10 @@ namespace GCollection
                 }
             }
             SetGoodsDetailinfoempty();
+            dataPage1.TotalCount = totalcount;
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.DataSource = null;
             this.dataGridView1.DataSource = ds.Tables[0];
-            dataPage1.TotalCount = totalcount;
         }
         #endregion
 
@@ -1011,7 +1010,7 @@ namespace GCollection
 
         private void dataGridView1_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            btnview.PerformClick();
+            btnproductprice.PerformClick();
         }
 
         private void dataGridView1_CurrentCellDirtyStateChanged(object sender, EventArgs e)
@@ -1220,10 +1219,10 @@ namespace GCollection
                 }
             }
             SetGoodsDetailinfoempty();
+            dataPage1.TotalCount = totalcount;
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.DataSource = null;
             this.dataGridView1.DataSource = ds.Tables[0];
-            dataPage1.TotalCount = totalcount;
         }
 
         /// <summary>
@@ -1486,11 +1485,11 @@ namespace GCollection
             querytype = 0;
             if (e.Node.GetNodeCount(true) < 1)
             {
+                treeView1.SelectedNode = e.Node;
                 dataPage1.CurrentPage = 1;
                 dataPage1.PageCount = 0;
                 dataPage1.TotalCount = 0;
                 dataPage1.PageSize = 20;
-                treeView1.SelectedNode = e.Node;
                 int catid = Convert.ToInt32(e.Node.Tag);
                 int c = spr.opgcc.Hasgoods(catid);
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
@@ -1502,7 +1501,6 @@ namespace GCollection
                 int c = spr.opgcc.Hasallgoods();
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
                 e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
-                SetDatagridviewEmpty();
             }
             else
             {
@@ -1511,13 +1509,13 @@ namespace GCollection
                 {
                     e.Node.Text = diccatedata[catid] + "(" + dicgoodscount[catid] + ")";
                 }
-                SetDatagridviewEmpty();
             }
         }
 
         private void bgwrefreshgoods_DoWork(object sender, DoWorkEventArgs e)
         {
             Getgoodscount();
+            e.Result = e.Argument;
         }
 
         private void bgwrefreshgoods_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1537,36 +1535,42 @@ namespace GCollection
                 treeView1.Nodes[0].Nodes[0].Text = strArray1[0] + "(0)";
             }
 
-            foreach (TreeNode tn in treeView1.Nodes[0].Nodes)
+            string s = e.Result.ToString();
+            if (s == "1")
             {
-                string catid = tn.Tag.ToString();
-                if (catid != "0")
+                foreach (int catid in catetreenodedata.Keys)
                 {
-                    if (dicgoodscount.Keys.Contains(catid))
+                    if (dicgoodscount.Keys.Contains(catid.ToString()))
                     {
                         Application.DoEvents();
-                        tn.Text = diccatedata[catid] + "(" + dicgoodscount[catid] + ")";
+                        catetreenodedata[catid].Text = diccatedata[catid.ToString()] + "(" + dicgoodscount[catid.ToString()] + ")";
                     }
                 }
             }
-
-            //foreach (int catid in catetreenodedata.Keys)
-            //{
-            //    if (dicgoodscount.Keys.Contains(catid.ToString()))
-            //    {
-            //        Application.DoEvents();
-            //        catetreenodedata[catid].Text = diccatedata[catid.ToString()] + "(" + dicgoodscount[catid.ToString()] + ")";
-            //    }
-            //}
+            else 
+            {
+                foreach (TreeNode tn in treeView1.Nodes[0].Nodes)
+                {
+                    string catid = tn.Tag.ToString();
+                    if (catid != "0")
+                    {
+                        if (dicgoodscount.Keys.Contains(catid))
+                        {
+                            Application.DoEvents();
+                            tn.Text = diccatedata[catid] + "(" + dicgoodscount[catid] + ")";
+                        }
+                    }
+                }
+            }
             Program.mfloadflag = "OK";
         }
 
         /// <summary>
         /// 刷新商品分类数量
         /// </summary>
-        public void Refreshgoodscount()
+        public void Refreshgoodscount(int f=0)
         {
-            bgwrefreshgoods.RunWorkerAsync();
+            bgwrefreshgoods.RunWorkerAsync(f);
         }
 
         /// <summary>
@@ -1577,11 +1581,13 @@ namespace GCollection
         private void btnrefreshcount_Click(object sender, EventArgs e)
         {
             Program.mfloadflag = "";
-            Refreshgoodscount();
+            treeView1.CollapseAll();
+            Refreshgoodscount(1);
             FormRefresh frm = new FormRefresh(null);
             frm.setplocation(210);
             frm.WindowState = FormWindowState.Normal;
             frm.ShowDialog();
+            treeView1.Nodes[0].Expand();
         }
         #endregion
 
@@ -1911,9 +1917,10 @@ namespace GCollection
                 //{
                 //    dataGridView1.CurrentRow.Cells["brand_name"].Value = "";
                 //}
+
+                MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dataPage1_EventPaging(null);
                 Refreshgoodscount();
-                MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -1982,7 +1989,7 @@ namespace GCollection
                 string skuinfo = dt.Rows[0]["skuInfos"].ToString();
                 if (skuinfo == "" || skuinfo == null || skuinfo == "null")
                 {
-                    MessageBox.Show("普通商品，没有规格价格。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("普通商品，没有规格。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
                 else
@@ -1997,6 +2004,14 @@ namespace GCollection
         private void MForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             System.Environment.Exit(0);
+        }
+
+        private void MForm_Resize(object sender, EventArgs e)
+        {
+            panel1.Top = 0;
+            panel1.Height = splitContainer1.Panel2.Height / 2+50;
+            panel2.Top = panel1.Height + 2;
+            panel2.Height = splitContainer1.Panel2.Height / 2-50-2-40;
         }
     }
 }

@@ -106,6 +106,8 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.btnquery2 = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.btnclose = new System.Windows.Forms.Button();
+            this.btnclose1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -603,12 +605,13 @@
             // 
             // btnsave
             // 
-            this.btnsave.Location = new System.Drawing.Point(392, 348);
+            this.btnsave.BackColor = System.Drawing.Color.Transparent;
+            this.btnsave.Location = new System.Drawing.Point(350, 348);
             this.btnsave.Name = "btnsave";
-            this.btnsave.Size = new System.Drawing.Size(129, 29);
+            this.btnsave.Size = new System.Drawing.Size(123, 30);
             this.btnsave.TabIndex = 30;
             this.btnsave.Text = "开始批量修改商品";
-            this.btnsave.UseVisualStyleBackColor = true;
+            this.btnsave.UseVisualStyleBackColor = false;
             this.btnsave.Click += new System.EventHandler(this.btnsave_Click);
             // 
             // tabControl1
@@ -624,6 +627,7 @@
             // tabPage1
             // 
             this.tabPage1.BackColor = System.Drawing.Color.White;
+            this.tabPage1.Controls.Add(this.btnclose1);
             this.tabPage1.Controls.Add(this.label3);
             this.tabPage1.Controls.Add(this.qtxtgoodssn);
             this.tabPage1.Controls.Add(this.qcmbgoodssn);
@@ -759,9 +763,9 @@
             // 
             // btnquery1
             // 
-            this.btnquery1.Location = new System.Drawing.Point(282, 348);
+            this.btnquery1.Location = new System.Drawing.Point(282, 347);
             this.btnquery1.Name = "btnquery1";
-            this.btnquery1.Size = new System.Drawing.Size(129, 29);
+            this.btnquery1.Size = new System.Drawing.Size(111, 33);
             this.btnquery1.TabIndex = 70;
             this.btnquery1.Text = "查看待修改商品";
             this.btnquery1.UseVisualStyleBackColor = true;
@@ -1094,6 +1098,7 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.btnclose);
             this.tabPage2.Controls.Add(this.btnquery2);
             this.tabPage2.Controls.Add(this.label4);
             this.tabPage2.Controls.Add(this.btnsave);
@@ -1108,9 +1113,9 @@
             // 
             // btnquery2
             // 
-            this.btnquery2.Location = new System.Drawing.Point(156, 348);
+            this.btnquery2.Location = new System.Drawing.Point(153, 348);
             this.btnquery2.Name = "btnquery2";
-            this.btnquery2.Size = new System.Drawing.Size(129, 29);
+            this.btnquery2.Size = new System.Drawing.Size(107, 30);
             this.btnquery2.TabIndex = 31;
             this.btnquery2.Text = "查看待修改商品";
             this.btnquery2.UseVisualStyleBackColor = true;
@@ -1124,6 +1129,26 @@
             this.label4.Size = new System.Drawing.Size(737, 2);
             this.label4.TabIndex = 30;
             this.label4.Text = "label4";
+            // 
+            // btnclose
+            // 
+            this.btnclose.Location = new System.Drawing.Point(615, 348);
+            this.btnclose.Name = "btnclose";
+            this.btnclose.Size = new System.Drawing.Size(75, 30);
+            this.btnclose.TabIndex = 32;
+            this.btnclose.Text = "关闭";
+            this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
+            // 
+            // btnclose1
+            // 
+            this.btnclose1.Location = new System.Drawing.Point(615, 347);
+            this.btnclose1.Name = "btnclose1";
+            this.btnclose1.Size = new System.Drawing.Size(75, 30);
+            this.btnclose1.TabIndex = 79;
+            this.btnclose1.Text = "关闭";
+            this.btnclose1.UseVisualStyleBackColor = true;
+            this.btnclose1.Click += new System.EventHandler(this.btnclose1_Click);
             // 
             // FormBatch
             // 
@@ -1231,5 +1256,7 @@
         private System.Windows.Forms.CheckBox qckbgoodssn;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnclose;
+        private System.Windows.Forms.Button btnclose1;
     }
 }

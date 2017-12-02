@@ -42,6 +42,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnclose = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +52,7 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(12, 96);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(231, 576);
+            this.treeView1.Size = new System.Drawing.Size(231, 566);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -76,7 +78,7 @@
             // 
             this.treeView2.Location = new System.Drawing.Point(526, 96);
             this.treeView2.Name = "treeView2";
-            this.treeView2.Size = new System.Drawing.Size(242, 576);
+            this.treeView2.Size = new System.Drawing.Size(242, 566);
             this.treeView2.TabIndex = 3;
             this.treeView2.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView2_NodeMouseClick);
             // 
@@ -176,11 +178,32 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "2.分类关联成功会对已经绑定了该分类的商品进行更新。";
             // 
+            // label6
+            // 
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label6.Location = new System.Drawing.Point(-2, 665);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(803, 2);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "label6";
+            // 
+            // btnclose
+            // 
+            this.btnclose.Location = new System.Drawing.Point(693, 670);
+            this.btnclose.Name = "btnclose";
+            this.btnclose.Size = new System.Drawing.Size(74, 27);
+            this.btnclose.TabIndex = 12;
+            this.btnclose.Text = "关闭";
+            this.btnclose.UseVisualStyleBackColor = true;
+            this.btnclose.Click += new System.EventHandler(this.btnclose_Click);
+            // 
             // Relcate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(787, 700);
+            this.Controls.Add(this.btnclose);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -220,5 +243,7 @@
         private System.Windows.Forms.Label lblp2;
         private System.Windows.Forms.Label lblp1;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnclose;
     }
 }

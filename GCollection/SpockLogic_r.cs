@@ -281,21 +281,30 @@ public   class SpockLogic_r
                         mf.setprogress();
                     }
                 }
-                else {
-                    if (allcount == (pagesize * cpage))
+                else
+                {
+                    int ed = allcount - pagesize * (cpage - 1);
+                    for (int j = 0; j < ed - proinfo.Length; j++)
                     {
-                        for (int j = 0; j < pagesize - proinfo.Length; j++)
-                        {
-                            mf.setprogress();
-                        }
+                        mf.setprogress();
                     }
-                    else if (allcount < (pagesize * cpage))
+                }
+            }
+            else
+            {
+                if (cpage < allpage)
+                {
+                    for (int k = 0; k < pagesize; k++)
                     {
-                        int ed = allcount - pagesize * (cpage - 1);
-                        for (int j = 0; j < ed - proinfo.Length; j++)
-                        {
-                            mf.setprogress();
-                        }
+                        mf.setprogress();
+                    }
+                }
+                else
+                {
+                    int ed = allcount - pagesize * (cpage - 1);
+                    for (int j = 0; j < ed - proinfo.Length; j++)
+                    {
+                        mf.setprogress();
                     }
                 }
             }
