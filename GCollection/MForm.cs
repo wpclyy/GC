@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -18,11 +19,7 @@ namespace GCollection
     [ComVisible(true)]
     public partial class MForm : Form
     {
-        /// <summary>
-        /// 采集1688业务操作类
-        /// </summary>
-        SpockLogic_r spr = null;
-
+        Opergcc op = new Opergcc();
         delegate void Delegateshowtoolstripstatus();
         /*每页数量*/
         int pagesize = 5;
@@ -99,14 +96,19 @@ namespace GCollection
         /// </summary>
         int querytype = 0;
 
+        /// <summary>
+        /// 商品主图数组，最多保存20个商品的主图
+        /// </summary>
+        private Dictionary<string, string[]> dicimgs = new Dictionary<string, string[]>();
+
         public MForm()
         {
             InitializeComponent();
-            spr = new SpockLogic_r(this);
             this.webBrowser1.Url = new Uri(Application.StartupPath + "\\kindeditor\\e.html", UriKind.Absolute);
             this.webBrowser1.ObjectForScripting = this;
             dataGridView1.CellPainting += new DataGridViewCellPaintingEventHandler(dataGridView1_CellPainting);
             System.Net.ServicePointManager.DefaultConnectionLimit = 512;   //HTTP请求并发数量最大不超过1024
+            lblpicindex.Text = "";
         }
 
         /// <summary>
@@ -125,14 +127,25 @@ namespace GCollection
         /// </summary>
         public void LoaderData()
         {
-            bgwloadsupplier.RunWorkerAsync();
-            bgloadcate.RunWorkerAsync();
+            bool b = false;
+            CaiJiSql  cjs= new CaiJiSql();
+            b=cjs.ConnectTestW();
+            if (b)
+            {
+                bgwloadsupplier.RunWorkerAsync();
+                bgloadcate.RunWorkerAsync();
+            }
+            else
+            {
+                MessageBox.Show("数据库连接失败","提示！",MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                System.Environment.Exit(0);
+            }
         }
 
         #region 加载供应商信息
         private void bgwloadsupplier_DoWork(object sender, DoWorkEventArgs e)
         {
-            DataSet dss = spr.opgcc.querysuppliers();
+            DataSet dss = op.querysuppliers();
             dssupp = dss;
         }
 
@@ -143,31 +156,11 @@ namespace GCollection
 
         public void showsuppliers(DataSet ds)
         {
-            if (this.listBox1.InvokeRequired)//等待异步
-            {
-                Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
-           delegate
-           {
-               this.listBox1.DataSource = null;
-               this.listBox1.DisplayMember = "company";
-               this.listBox1.ValueMember = "MemberId";
-               this.listBox1.DataSource = ds.Tables[0];
-               this.listBox1.Update();
-               this.listBox1.SelectedItem = null;
-               this.lblsuppliercount.Text = ds.Tables[0].Rows.Count + "个";
-           });
-                this.BeginInvoke(clsobj);
-            }
-            else
-            {
-                this.listBox1.DataSource = null;
-                this.listBox1.DisplayMember = "company";
-                this.listBox1.ValueMember = "MemberId";
-                this.listBox1.DataSource = ds.Tables[0];
-                this.listBox1.Update();
-                this.listBox1.SelectedItem = null;
-                this.lblsuppliercount.Text = ds.Tables[0].Rows.Count + "个";
-            }
+            this.listBox1.DataSource = null;
+            this.listBox1.DisplayMember = "company";
+            this.listBox1.ValueMember = "MemberId";
+            this.listBox1.DataSource = ds.Tables[0];
+            this.lblsuppliercount.Text = ds.Tables[0].Rows.Count + "个";
         }
         #endregion
 
@@ -179,21 +172,11 @@ namespace GCollection
         /// <param name="e"></param>
         private void bgloadcate_DoWork(object sender, DoWorkEventArgs e)
         {
-            DataSet ds = spr.opgcc.Querydscbrand();
+            DataSet ds = op.Querydscbrand();
             dtbrand = ds.Tables[0];
-
-            DataSet ds1 = spr.opgcc.Querydsccate();
+            DataSet ds1 = op.Querydsccate();
             dtcate = ds1.Tables[0];
-
             LoadAliCate();
-        }
-
-        private void bgloadcate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            showbrand();
-            showcatedsc();
-            Getgoodscount();
-            loadcategoodscount();
         }
 
         /// <summary>
@@ -201,7 +184,7 @@ namespace GCollection
         /// </summary>
         private void LoadAliCate()
         {
-            DataSet ds2 = spr.opgcc.querycate();
+            DataSet ds2 = op.querycate();
             if (ds2.Tables[0] != null && ds2.Tables[0].Rows.Count > 0)
             {
                 dtcateali = ds2.Tables[0];
@@ -213,7 +196,82 @@ namespace GCollection
                     diccatenameali.Add(dtcateali.Rows[i]["catid"].ToString(), dtcateali.Rows[i]["catname"].ToString());
                 }
             }
-            spr.Loadrelcate();
+        }
+
+        private void bgloadcate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            showbrand();
+            showcatedsc();
+        }
+
+        /// <summary>
+        /// 加载品牌
+        /// </summary>
+        public void showbrand()
+        {
+            cmbbrand.DataSource = dtbrand;
+            cmbbrand.ValueMember = "brand_id";
+            cmbbrand.DisplayMember = "brand_name";
+        }
+
+        /// <summary>
+        /// 显示购低网商品分类树
+        /// </summary>
+        public void showcatedsc()
+        {
+            treeView1.Nodes[0].Nodes.Clear();
+            TreeNode tn = new TreeNode();
+            tn.Tag = 0;
+            tn.Text = "未分类商品";
+            treeView1.Nodes[0].Nodes.Add(tn);
+            tvcat.Nodes.Clear();
+            catetreenodedata.Clear();
+            diccatedata.Clear();
+            AddChildrenCateDsc("0", null);
+            Refreshgoodscount(1);
+        }
+
+        /// <summary>
+        /// 嵌套加载购低网商品分类树节点
+        /// </summary>
+        /// <param name="parentid"></param>
+        /// <param name="pnode"></param>
+        public void AddChildrenCateDsc(string parentid, TreeNode pnode)
+        {
+            DataRow[] dr = dtcate.Select("parent_id='" + parentid + "'");
+            if (dr == null || dr.Length < 1)
+            {
+                return;
+            }
+            for (int i = 0; i < dr.Length; i++)
+            {
+                TreeNode cnode = new TreeNode();
+                cnode.Text = dr[i]["cat_name"].ToString();
+                cnode.Tag = dr[i]["cat_id"].ToString();
+                if (pnode == null)
+                {
+                    treeView1.Nodes[0].Nodes.Add(cnode);
+                }
+                else
+                {
+                    pnode.Nodes.Add(cnode);
+                }
+                if (!diccatedata.Keys.Contains(cnode.Tag.ToString()))
+                {
+                    diccatedata.Add(cnode.Tag.ToString(), cnode.Text);
+                }
+                if (!catetreenodedata.Keys.Contains(Convert.ToInt32(cnode.Tag)))
+                {
+                    catetreenodedata.Add(Convert.ToInt32(cnode.Tag), cnode);
+                }
+                string catid = dr[i]["cat_id"].ToString();
+                AddChildrenCateDsc(catid, cnode);
+                if (pnode == null)
+                {
+                    TreeNode tt = (TreeNode)cnode.Clone();
+                    tvcat.Nodes.Add(tt);
+                }
+            }
         }
 
         /// <summary>
@@ -221,7 +279,7 @@ namespace GCollection
         /// </summary>
         private void Getgoodscount()
         {
-            DataTable dt = spr.opgcc.Hasgoods();
+            DataTable dt = op.Hasgoods();
             dicgoodscount.Clear();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
@@ -275,87 +333,6 @@ namespace GCollection
             }
         }
 
-        /// <summary>
-        /// 设置分类树商品数量
-        /// </summary>
-        public void loadcategoodscount()
-        {
-            int allcount = 0;
-            allcount = spr.opgcc.Hasallgoods();
-            string[] strArray = treeView1.Nodes[0].Text.Split('('); //字符串转数组
-            treeView1.Nodes[0].Text = strArray[0] + "(" + allcount + ")";
-
-            string[] strArray1 = treeView1.Nodes[0].Nodes[0].Text.Split('('); //字符串转数组
-            if (dicgoodscount.Keys.Contains("0"))
-            {
-                treeView1.Nodes[0].Nodes[0].Text = strArray1[0] + "(" + dicgoodscount["0"] + ")";
-            }
-            else
-            {
-                treeView1.Nodes[0].Nodes[0].Text = strArray1[0] + "(0)";
-            }
-
-            foreach (int catid in catetreenodedata.Keys)
-            {
-                if (dicgoodscount.Keys.Contains(catid.ToString()))
-                {
-                    Application.DoEvents();
-                    catetreenodedata[catid].Text = diccatedata[catid.ToString()] + "(" + dicgoodscount[catid.ToString()] + ")";
-                }
-            }
-            Program.mfloadflag = "OK";
-        }
-
-        /// <summary>
-        /// 加载品牌
-        /// </summary>
-        public void showbrand()
-        {
-            cmbbrand.DataSource = dtbrand;
-            cmbbrand.ValueMember = "brand_id";
-            cmbbrand.DisplayMember = "brand_name";
-        }
-
-        /// <summary>
-        /// 显示购低网商品分类树
-        /// </summary>
-        public void showcatedsc()
-        {
-            foreach (DataRow row in dtcate.Rows)
-            {
-                if (row["parent_id"].ToString() == "0")
-                {
-                    Application.DoEvents();
-                    TreeNode pnode = new TreeNode();
-                    pnode.Text = row["cat_name"].ToString();
-                    pnode.Tag = row["cat_id"].ToString();
-                    treeView1.Nodes[0].Nodes.Add(pnode);
-                    string catid = pnode.Tag.ToString();
-                    AddChildnode_dsc(catid, pnode, dtcate);
-                    TreeNode tt = (TreeNode)pnode.Clone();
-                    tvcat.Nodes.Add(tt);
-                }
-            }
-            treeView1.Nodes[0].Expand();
-        }
-
-        public void AddChildnode_dsc(string pid, TreeNode pnode, DataTable dt)
-        {
-            catetreenodedata.Add(Convert.ToInt32(pnode.Tag), pnode);
-            diccatedata.Add(pnode.Tag.ToString(), pnode.Text);
-            foreach (DataRow row in dt.Rows)
-            {
-                if (row["parent_id"].ToString() == pid)
-                {
-                    TreeNode cnode = new TreeNode();
-                    cnode.Text = row["cat_name"].ToString();
-                    cnode.Tag = row["cat_id"].ToString();
-                    pnode.Nodes.Add(cnode);
-                    string catid = cnode.Tag.ToString();
-                    AddChildnode_dsc(catid, cnode, dt);
-                }
-            }
-        }
         #endregion
 
         #region 采集1688商品分类
@@ -420,7 +397,8 @@ namespace GCollection
         {
             ccurrcount = 0;
             allcount = 0;
-            spr.getcategory(e);
+            CaiJi cj = new CaiJi();
+            cj.CjCategory(e);
         }
 
         private void bgwcate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -436,8 +414,8 @@ namespace GCollection
             else
             {
                 MessageBox.Show("完成", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadAliCate();
             }
+            LoadAliCate();
             if (spro != null)
             {
                 spro.Close();
@@ -532,17 +510,19 @@ namespace GCollection
             scurrcount = 0;
             sallcount = 0;
             suppliername = "";
-            DataSet ds = spr.opgcc.querysuppliers();
+            CaiJiSql cjs = new CaiJiSql();
+            DataSet ds = cjs.Querysuppliers();
             if (ds != null)
             {
                 sallcount = ds.Tables[0].Rows.Count;
             }
+            CaiJi cj = new CaiJi();
             foreach (DataRow row in ds.Tables[0].Rows)
             {
                 scurrcount += 1;
-                suppliername = row["company"].ToString();
+                suppliername = row["company"].ToString().Split('[')[0];
                 string mid = row["MemberId"].ToString();
-                allcount = spr.getproduct(mid);
+                allcount = cj.GetProductCount(mid);
                 ccurrcount = 0;
                 int allpage = 1;
                 if (allcount > 0)
@@ -558,7 +538,7 @@ namespace GCollection
                         }
                         else
                         {
-                            spr.getproductbypage(i, pagesize, mid, allcount, allpage);
+                            cj.CjProduct(i, pagesize, mid, allcount, allpage);
                         }
                     }
                 }
@@ -640,9 +620,10 @@ namespace GCollection
 
         private void bgwsupplier_DoWork(object sender, DoWorkEventArgs e)
         {
+            CaiJi cj = new CaiJi();
             ccurrcount = 0;
             allcount = 0;
-            allcount = spr.getsuppliers();
+            allcount = cj.GetSuppliersCount();
             int allpage = 1;
             if (allcount > 0)
             {
@@ -657,7 +638,7 @@ namespace GCollection
                     }
                     else
                     {
-                        spr.start(i, pagesize, allpage, allcount);
+                        cj.CjSuppliers(i, pagesize, allpage, allcount);
                     }
                 }
             }
@@ -693,9 +674,9 @@ namespace GCollection
             allcount = 0;
             scurrcount = 1;
             sallcount = 1;
-
+            CaiJi cj = new CaiJi();
             string mid = this.member;
-            allcount = spr.getproduct(mid);
+            allcount = cj.GetProductCount(mid);
             int allpage = 1;
             if (allcount > 0)
             {
@@ -710,7 +691,7 @@ namespace GCollection
                     }
                     else
                     {
-                        spr.getproductbypage(i, pagesize, mid, allcount, allpage);
+                        cj.CjProduct(i, pagesize, mid, allcount, allpage);
                     }
                 }
             }
@@ -756,12 +737,11 @@ namespace GCollection
                 this.suppliername = my_row["company"].ToString().Split('[')[0];
                 SetSupplierGoodscount(this.member);
                 dataPage1.CurrentPage = 1;
-                dataPage1.PageCount = 0;
-                dataPage1.TotalCount = 0;
                 dataPage1.PageSize = 20;
                 Querygoodsbysupp(this.member);
             }
         }
+
         private void SetDatagridviewEmpty()
         {
             listBox1.SelectedItem = null;
@@ -782,7 +762,7 @@ namespace GCollection
         /// <param name="memberid"></param>
         private void SetSupplierGoodscount(string memberid)
         {
-            DataTable dt = spr.opgcc.QuerySupplierGoodscount(memberid);
+            DataTable dt = op.QuerySupplierGoodscount(memberid);
             if (dt != null && dt.Rows.Count > 0)
             {
                 DataTable dts = ((DataTable)listBox1.DataSource);
@@ -800,10 +780,54 @@ namespace GCollection
         /// <param name="member"></param>
         private void Querygoodsbysupp(string member)
         {
+            frmld.BringToFront();
+            frmld.Show();
+            Application.DoEvents();
+            Thread th = new Thread(queryproductbysupp);
+            th.IsBackground = true;
+            th.Start(member);
+            //int startindex = dataPage1.CurrentPage;
+            //int pagesize = dataPage1.PageSize;
+            //int totalcount = 0;
+            //DataSet ds = op.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
+            //for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            //{
+            //    string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
+            //    string[] sarr = s.Split(new char[] { '-', '>' });
+            //    string st = "";
+            //    for (int j = sarr.Length - 1; j >= 0; j--)
+            //    {
+            //        if (sarr[j] != "")
+            //        {
+            //            st += sarr[j] + "/";
+            //        }
+            //    }
+            //    ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
+            //    string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString();
+            //    cmbbrand.SelectedValue = brand_id;
+            //    if (cmbbrand.SelectedItem != null)
+            //    {
+            //        ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+            //    }
+            //    else
+            //    {
+            //        ds.Tables[0].Rows[i]["brand_name"] = "";
+            //    }
+            //}
+            //SetGoodsDetailinfoempty();
+            //dataPage1.TotalCount = totalcount;
+            //this.dataGridView1.AutoGenerateColumns = false;
+            //this.dataGridView1.DataSource = null;
+            //this.dataGridView1.DataSource = ds.Tables[0];
+        }
+
+        private void queryproductbysupp(object obj)
+        {
+            string  member = (string)obj;
             int startindex = dataPage1.CurrentPage;
             int pagesize = dataPage1.PageSize;
             int totalcount = 0;
-            DataSet ds = spr.opgcc.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
+            DataSet ds = op.queryproductbysupp_page(member, startindex, pagesize, out totalcount);
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
@@ -818,21 +842,39 @@ namespace GCollection
                 }
                 ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
                 string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString();
-                cmbbrand.SelectedValue = brand_id;
-                if (cmbbrand.SelectedItem != null)
+
+                if (this.InvokeRequired)//等待异步
                 {
-                    ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
-                }
-                else
-                {
-                    ds.Tables[0].Rows[i]["brand_name"] = "";
+                    Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+                    delegate
+                    {
+                        cmbbrand.SelectedValue = brand_id;
+                        if (cmbbrand.SelectedItem != null)
+                        {
+                            ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+                        }
+                        else
+                        {
+                            ds.Tables[0].Rows[i]["brand_name"] = "";
+                        }
+                    });
+                    this.Invoke(clsobj);
                 }
             }
-            SetGoodsDetailinfoempty();
-            dataPage1.TotalCount = totalcount;
-            this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.DataSource = null;
-            this.dataGridView1.DataSource = ds.Tables[0];
+            if (this.InvokeRequired)//等待异步
+            {
+                Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+                delegate
+                {
+                    SetGoodsDetailinfoempty();
+                    dataPage1.TotalCount = totalcount;
+                    this.dataGridView1.AutoGenerateColumns = false;
+                    this.dataGridView1.DataSource = null;
+                    this.dataGridView1.DataSource = ds.Tables[0];
+                    frmld.Hide();
+                });
+                this.Invoke(clsobj);
+            }
         }
         #endregion
 
@@ -842,7 +884,7 @@ namespace GCollection
         /// </summary>
         private void btnsuppsousou_Click(object sender, EventArgs e)
         {
-            if (txtsuppsousou.Text.Trim() != "")
+            if (txtsuppsousou.Text.Trim() != "" && txtsuppsousou.Text.Trim() != "请输入供应商名称")
             {
                 string soutext = txtsuppsousou.Text.Trim();
                 Setlistselected(soutext);
@@ -1026,6 +1068,7 @@ namespace GCollection
             if (e.RowIndex != (dataGridView1.CurrentRow == null ? -1 : dataGridView1.CurrentRow.Index))
             {
                 string goods_sn = this.dataGridView1.Rows[e.RowIndex].Cells["goods_sn"].Value.ToString();
+                 txtgoods_sn.Text  = goods_sn;
                 txtgoodstitle.Text = this.dataGridView1.Rows[e.RowIndex].Cells["goods_name"].Value.ToString();
                 txtsellprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["market_price"].Value.ToString();
                 txtprice.Text = this.dataGridView1.Rows[e.RowIndex].Cells["shop_price"].Value.ToString();
@@ -1035,7 +1078,10 @@ namespace GCollection
                 if (img != string.Empty)
                 {
                     string picurl = GetGoodsImgUrl(img);
-                    pictureBox1.ImageLocation = picurl; ;
+                    //pictureBox1.ImageLocation = picurl;
+                    Image imgt = Getpicbyurl(picurl);
+                    pictureBox1.Tag = 0;
+                    pictureBox1.BackgroundImage = imgt;
                 }
                 this.content = dataGridView1.Rows[e.RowIndex].Cells["goods_desc"].Value.ToString();
                 SetDetailContent(content);
@@ -1043,6 +1089,25 @@ namespace GCollection
                 string dd = this.dataGridView1.Rows[e.RowIndex].Cells["cat_id"].Value.ToString();
                 txtgoodscate.Text = (diccatedata.Keys.Contains(dd) == true) ? diccatedata[dd] : "";
                 txtgoodscate.Tag = dd;
+            }
+        }
+
+        private Image Getpicbyurl(string url)
+        {
+            try
+            {
+                WebRequest webreq = WebRequest.Create(url);
+                WebResponse webres = webreq.GetResponse();
+                Stream stream = webres.GetResponseStream();
+                Image image;
+                image = Image.FromStream(stream);
+                stream.Close();
+                return image;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return null;
             }
         }
 
@@ -1184,16 +1249,68 @@ namespace GCollection
             }
         }
 
+        Loading frmld = new Loading();
+
         /// <summary>
         /// 根据商品分类获取商品信息
         /// </summary>
         /// <param name="catid"></param>
         private void GvDataBind(string catid)
         {
+            frmld.BringToFront();
+            frmld.Show();
+            Application.DoEvents();
+            //int startindex = dataPage1.CurrentPage;
+            //int pagesize = dataPage1.PageSize;
+            //int totalcount = 0;
+            //DataSet ds = op.queryproductbycatid_page(catid, startindex, pagesize, out totalcount);
+            //for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
+            //{
+            //    string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
+            //    string[] sarr = s.Split(new char[] { '-', '>' });
+            //    string st = "";
+            //    for (int j = sarr.Length - 1; j >= 0; j--)
+            //    {
+            //        if (sarr[j] != "")
+            //        {
+            //            st += sarr[j] + "/";
+            //        }
+            //    }
+            //    ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
+            //    string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString();
+            //    cmbbrand.SelectedValue = brand_id;
+            //    if (cmbbrand.SelectedItem != null)
+            //    {
+            //        ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+            //    }
+            //    else
+            //    {
+            //        ds.Tables[0].Rows[i]["brand_name"] = "";
+            //    }
+            //}
+            //SetGoodsDetailinfoempty();
+            //dataPage1.TotalCount = totalcount;
+            //this.dataGridView1.AutoGenerateColumns = false;
+            //this.dataGridView1.DataSource = null;
+            //this.dataGridView1.DataSource = ds.Tables[0];
+            //frmld.Hide();
+
+            Thread th = new Thread(queryproductbycatid);
+            th.IsBackground = true;
+            th.Start(catid);
+        }
+
+        /// <summary>
+        /// 根据商品分类加载商品分页模式
+        /// </summary>
+        /// <param name="obj"></param>
+        private void queryproductbycatid(object obj)
+        {
+            string catid = (string)obj;
             int startindex = dataPage1.CurrentPage;
             int pagesize = dataPage1.PageSize;
             int totalcount = 0;
-            DataSet ds = spr.opgcc.queryproductbycatid_page(catid, startindex, pagesize, out totalcount);
+            DataSet ds = op.queryproductbycatid_page(catid, startindex, pagesize, out totalcount);
             for (int i = 0; i < ds.Tables[0].Rows.Count; i++)
             {
                 string s = GetParentInfo(ds.Tables[0].Rows[i]["catid"].ToString());
@@ -1207,22 +1324,40 @@ namespace GCollection
                     }
                 }
                 ds.Tables[0].Rows[i]["catname"] = st + ds.Tables[0].Rows[i]["catname"];
-                string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString ();
-                cmbbrand.SelectedValue = brand_id;
-                if (cmbbrand.SelectedItem != null)
+                string brand_id = ds.Tables[0].Rows[i]["brand_id"].ToString();
+
+                if (this.InvokeRequired)//等待异步
                 {
-                    ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
-                }
-                else
-                {
-                    ds.Tables[0].Rows[i]["brand_name"] = "";
+                    Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+                    delegate
+                    {
+                    cmbbrand.SelectedValue = brand_id;
+                    if (cmbbrand.SelectedItem != null)
+                    {
+                        ds.Tables[0].Rows[i]["brand_name"] = cmbbrand.Text.ToString();
+                    }
+                    else
+                    {
+                        ds.Tables[0].Rows[i]["brand_name"] = "";
+                    }
+                    });
+                    this.Invoke(clsobj);
                 }
             }
-            SetGoodsDetailinfoempty();
-            dataPage1.TotalCount = totalcount;
-            this.dataGridView1.AutoGenerateColumns = false;
-            this.dataGridView1.DataSource = null;
-            this.dataGridView1.DataSource = ds.Tables[0];
+            if (this.InvokeRequired)//等待异步
+            {
+                Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
+                delegate
+                {
+                    SetGoodsDetailinfoempty();
+                    dataPage1.TotalCount = totalcount;
+                    this.dataGridView1.AutoGenerateColumns = false;
+                    this.dataGridView1.DataSource = null;
+                    this.dataGridView1.DataSource = ds.Tables[0];
+                    frmld.Hide();
+                });
+                this.Invoke(clsobj);
+            }
         }
 
         /// <summary>
@@ -1263,6 +1398,7 @@ namespace GCollection
                     {
                         ((PictureBox)ctr).ImageLocation = String.Empty;
                         ((PictureBox)ctr).Image = null;
+                        ((PictureBox)ctr).BackgroundImage = null;
                     }
                     else if (ctr is WebBrowser)
                     {
@@ -1451,15 +1587,68 @@ namespace GCollection
             }
         }
 
-        private void txtgoodscate_Enter(object sender, EventArgs e)
-        {
-            tvcat.Show();
-        }
-
         private void tvcat_Leave(object sender, EventArgs e)
         {
-            tvcat.CollapseAll();
-            tvcat.Hide();
+                tvcat.SelectedNode = null;
+                tvcat.CollapseAll();
+                tvcat.Hide();
+        }
+
+        private void txtgoodscate_Enter(object sender, EventArgs e)
+        {
+            tvcat.Height = 205;
+            tvcat.Top = 10;
+            tvcat.Show();
+            if (txtgoodscate.Tag != null && txtgoodscate.Tag.ToString() != "")
+            {
+                string catid = txtgoodscate.Tag.ToString();
+                foreach (TreeNode tn in tvcat.Nodes)
+                {
+                    if (tvcat.SelectedNode != null)
+                    {
+                        return;
+                    }
+                    if (tn.Nodes.Count > 0)
+                    {
+                        EachTreeNodeA(tn, catid);
+                    }
+                    else
+                    {
+                        if (tn.Tag.ToString() == catid)
+                        {
+                            tvcat.SelectedNode = tn;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                tvcat.TopNode = tvcat.Nodes[0];
+            }
+        }
+
+        public void EachTreeNodeA(TreeNode tn, string catid)
+        {
+            foreach (TreeNode tnc in tn.Nodes)
+            {
+                if (tvcat.SelectedNode != null)
+                {
+                    return;
+                }
+                if (tnc.Nodes.Count > 0)
+                { 
+                    EachTreeNodeA(tnc, catid);
+                }
+                else
+                {
+                    if (tnc.Tag.ToString() == catid)
+                    {
+                        tvcat.SelectedNode = tnc;
+                        break;
+                    }
+                }
+            }
         }
 
         private void txtgoodscate_Leave(object sender, EventArgs e)
@@ -1487,23 +1676,22 @@ namespace GCollection
             {
                 treeView1.SelectedNode = e.Node;
                 dataPage1.CurrentPage = 1;
-                dataPage1.PageCount = 0;
-                dataPage1.TotalCount = 0;
                 dataPage1.PageSize = 20;
                 int catid = Convert.ToInt32(e.Node.Tag);
-                int c = spr.opgcc.Hasgoods(catid);
+                int c = op.Hasgoods(catid);
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
                 e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
                 dataPage1_EventPaging(null);
             }
             else if (e.Node.Parent == null)
             {
-                int c = spr.opgcc.Hasallgoods();
+                int c = op.Hasallgoods();
                 string[] strArray = e.Node.Text.Split('('); //字符串转数组
                 e.Node.Text = strArray[0] + "(" + c.ToString() + ")";
             }
             else
             {
+                Getgoodscount();
                 string catid = e.Node.Tag.ToString();
                 if (dicgoodscount.Keys.Contains(catid))
                 {
@@ -1521,7 +1709,7 @@ namespace GCollection
         private void bgwrefreshgoods_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             int allcount = 0;
-            allcount = spr.opgcc.Hasallgoods();
+            allcount = op.Hasallgoods();
             string[] strArray = treeView1.Nodes[0].Text.Split('('); //字符串转数组
             treeView1.Nodes[0].Text = strArray[0] + "(" + allcount + ")";
 
@@ -1582,11 +1770,12 @@ namespace GCollection
         {
             Program.mfloadflag = "";
             treeView1.CollapseAll();
-            Refreshgoodscount(1);
+            bgloadcate.RunWorkerAsync();
             FormRefresh frm = new FormRefresh(null);
             frm.setplocation(210);
             frm.WindowState = FormWindowState.Normal;
             frm.ShowDialog();
+            SetDatagridviewEmpty();
             treeView1.Nodes[0].Expand();
         }
         #endregion
@@ -1605,7 +1794,6 @@ namespace GCollection
         class uploadobj
         {
             public DataTable dt;
-            public string goodssn;
             public FormRefresh frm;
         }
 
@@ -1621,7 +1809,6 @@ namespace GCollection
             }
 
             DataTable gridSelectDT = TotalDT.Clone();
-            string goods_sn = "";
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
                 DataGridViewCheckBoxCell checkCell = (DataGridViewCheckBoxCell)this.dataGridView1.Rows[i].Cells["colcheck"];
@@ -1630,7 +1817,6 @@ namespace GCollection
                     DataRow dr = (dataGridView1.Rows[i].DataBoundItem as DataRowView).Row;
                     object[] obj = dr.ItemArray;
                     gridSelectDT.Rows.Add(obj);
-                    goods_sn += "'" + dr["goods_sn"].ToString() + "',";
                 }
             }
             if (gridSelectDT.Rows.Count > 0)
@@ -1647,7 +1833,6 @@ namespace GCollection
                 frm.setprogress(0, gridSelectDT.Rows.Count);
                 uploadobj obj = new uploadobj();
                 obj.frm = frm;
-                obj.goodssn = goods_sn;
                 obj.dt = gridSelectDT;
                 bgwupload.RunWorkerAsync(obj);
                 frm.ShowDialog();
@@ -1720,7 +1905,7 @@ namespace GCollection
             uploadobj obj = (uploadobj)e.Argument;
             DataTable gridSelectDT = obj.dt;
             FormRefresh frm = obj.frm;
-            string goods_sn = obj.goodssn;
+            string goods_sn = "";
             Dictionary<string, string> dic = new Dictionary<string, string>();
             for (int i = 0; i < gridSelectDT.Rows.Count; i++)
             {
@@ -1729,7 +1914,7 @@ namespace GCollection
                     e.Cancel = true;
                     break;
                 }
-                DataTable dt = spr.opgcc.QueryGoodsbyProductid(gridSelectDT.Rows[i]["goods_sn"].ToString());
+                DataTable dt = op.QueryGoodsbyProductid(gridSelectDT.Rows[i]["goods_sn"].ToString());
                 dic.Clear();
                 dic.Add("imagelist", dt.Rows[0]["imagelist"].ToString());
                 dic.Add("saleinfo", dt.Rows[0]["saleinfo"].ToString());
@@ -1750,6 +1935,7 @@ namespace GCollection
                 dic.Add("is_on_sale", gridSelectDT.Rows[i]["is_on_sale"].ToString());
                 dic.Add("is_shipping", gridSelectDT.Rows[i]["is_shipping"].ToString());
                 uploaddsc(dic);
+                goods_sn += "'" + gridSelectDT.Rows[i]["goods_sn"].ToString() + "',";
                 if (this.InvokeRequired)//等待异步
                 {
                     Delegateshowtoolstripstatus clsobj = new Delegateshowtoolstripstatus(
@@ -1761,7 +1947,7 @@ namespace GCollection
                 }
             }
             goods_sn = goods_sn.TrimEnd(',');
-            spr.opgcc.setgoodsstatus(goods_sn);
+            op.setgoodsstatus(goods_sn);
         }
 
         private void bgwupload_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1790,9 +1976,9 @@ namespace GCollection
         /// <param name="e"></param>
         private void toolStripButton7_Click(object sender, EventArgs e)
         {
-            Relcate rc = new Relcate(spr);
-            rc.Loaderdata(dtcateali, dtcate, diccatedata);
-            rc.ShowDialog(this);
+            Relcate rc = new Relcate();
+            rc.Loaderdata();
+            rc.ShowDialog();
         }
 
         /// <summary>
@@ -1802,7 +1988,7 @@ namespace GCollection
         /// <param name="e"></param>
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            FormBatch frm = new FormBatch(dtbrand, dtcate, spr);
+            FormBatch frm = new FormBatch();
             frm.ShowDialog(this);
         }
 
@@ -1835,7 +2021,7 @@ namespace GCollection
                     return;
                 }
                 pids = pids.TrimEnd(',');
-                bool b = spr.opgcc.deleteproductbyid(pids);
+                bool b = op.deleteproductbyid(pids);
                 if (b)
                 {
                     MessageBox.Show("删除完成！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1899,25 +2085,9 @@ namespace GCollection
             pt.Is_on_sale = Convert.ToInt16(dr["is_on_sale"]);
             pt.Goods_desc = this.content;
             pt.Goods_sn = dr["goods_sn"].ToString();
-            bool b = spr.opgcc.UpdateProduct(pt);
+            bool b = op.UpdateProduct(pt);
             if (b)
             {
-                //dataGridView1.CurrentRow.Cells["goods_name"].Value = pt.Goods_name;
-                //dataGridView1.CurrentRow.Cells["market_price"].Value = pt.Market_price;
-                //dataGridView1.CurrentRow.Cells["shop_price"].Value = pt.Shop_price;
-                //dataGridView1.CurrentRow.Cells["cat_id"].Value = pt.Cat_id;
-                //dataGridView1.CurrentRow.Cells["brand_id"].Value = pt.Brand_id;
-                //dataGridView1.CurrentRow.Cells["goods_desc"].Value = pt.Goods_desc;
-                //dataGridView1.CurrentRow.Cells["integral"].Value = pt.Integral;
-                //if (pt.Brand_id > 0)
-                //{
-                //    dataGridView1.CurrentRow.Cells["brand_name"].Value = cmbbrand.Text.ToString();
-                //}
-                //else
-                //{
-                //    dataGridView1.CurrentRow.Cells["brand_name"].Value = "";
-                //}
-
                 MessageBox.Show("保存成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 dataPage1_EventPaging(null);
                 Refreshgoodscount();
@@ -1983,7 +2153,7 @@ namespace GCollection
             }
             int rindex = dataGridView1.CurrentRow.Index;
             string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString ();
-            DataTable dt=  spr.opgcc.QueryGoodsbyProductid(productid);
+            DataTable dt= op.QueryGoodsbyProductid(productid);
             if (dt != null && dt.Rows.Count > 0)
             {
                 string skuinfo = dt.Rows[0]["skuInfos"].ToString();
@@ -2001,6 +2171,86 @@ namespace GCollection
             }
         }
 
+        private void btnprev_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
+            {
+                return;
+            }
+            int rindex = dataGridView1.CurrentRow.Index;
+            string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString();
+            int picindex = Convert.ToInt32(pictureBox1.Tag);
+            string[] simg = new string[] { };
+            if (dicimgs.Keys.Count > 20)
+            {
+                dicimgs.Clear();
+            }
+            if (dicimgs.ContainsKey(productid))
+            {
+                simg = dicimgs[productid];
+            }
+            else
+            {
+                DataTable dt = op.QueryGoodsbyProductid(productid);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    string img = "";
+                    img = dt.Rows[0]["imagelist"].ToString();
+                    simg = img.Split(',');
+                    dicimgs.Add(productid, simg);
+                }
+            }
+            if (picindex > 0)
+            {
+                picindex -= 1;
+                string picurl = GetGoodsImgUrl(simg[picindex]);
+                // pictureBox1.ImageLocation = picurl; 
+                Image imgt = Getpicbyurl(picurl);
+                pictureBox1.Tag = picindex;
+                pictureBox1.BackgroundImage = imgt;
+            }
+        }
+
+        private void btnnext_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentRow == null || dataGridView1.CurrentRow.Index < 0)
+            {
+                return;
+            }
+            int rindex = dataGridView1.CurrentRow.Index;
+            string productid = dataGridView1.CurrentRow.Cells["goods_sn"].Value.ToString();
+            int picindex = Convert.ToInt32(pictureBox1.Tag);
+            string[] simg = new string[] { };
+            if (dicimgs.Keys.Count > 20)
+            {
+                dicimgs.Clear();
+            }
+            if (dicimgs.ContainsKey(productid))
+            {
+                simg = dicimgs[productid];
+            }
+            else
+            {
+                DataTable dt = op.QueryGoodsbyProductid(productid);
+                if (dt != null && dt.Rows.Count > 0)
+                {
+                    string img = "";
+                    img = dt.Rows[0]["imagelist"].ToString();
+                    simg = img.Split(',');
+                    dicimgs.Add(productid, simg);
+                }
+            }
+            if (picindex < simg.Length - 1)
+            {
+                picindex += 1;
+                string picurl = GetGoodsImgUrl(simg[picindex]);
+                //  pictureBox1.ImageLocation = picurl; ;
+                Image imgt = Getpicbyurl(picurl);
+                pictureBox1.Tag = picindex;
+                pictureBox1.BackgroundImage = imgt;
+            }
+        }
+
         private void MForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             System.Environment.Exit(0);
@@ -2012,6 +2262,24 @@ namespace GCollection
             panel1.Height = splitContainer1.Panel2.Height / 2+50;
             panel2.Top = panel1.Height + 2;
             panel2.Height = splitContainer1.Panel2.Height / 2-50-2-40;
+        }
+
+        private void pictureBox1_BackgroundImageChanged(object sender, EventArgs e)
+        {
+            if (pictureBox1.BackgroundImage == null)
+            {
+                lblpicindex.Text = "";
+            }
+            else
+            {
+                int c = -1;
+                c=Convert.ToInt32(((pictureBox1.Tag ==null || pictureBox1.Tag.ToString()=="")?"-1":pictureBox1.Tag ));
+                if(c>=0)
+                {
+                    c += 1;
+                    lblpicindex.Text = c.ToString();
+                }
+            }
         }
     }
 }

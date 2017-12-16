@@ -16,7 +16,7 @@ namespace GCollection
         {
             InitializeComponent();
         }
-        MForm mf = null;
+
         private void FormLoad_Load(object sender, EventArgs e)
         {
            
@@ -28,7 +28,7 @@ namespace GCollection
             {
                 timer1.Stop();
                 this.Hide();
-                mf.Show();
+                Program. mf.Show();
             } 
         }
 
@@ -41,9 +41,9 @@ namespace GCollection
         {
             timer1.Start();
             Application.DoEvents();
-            mf = new MForm();
-            mf.Hide();
-            mf.LoaderData();
+            Program. mf = new MForm();
+            Program.mf.Hide();
+            Program.mf.LoaderData();
         }
     }
 }

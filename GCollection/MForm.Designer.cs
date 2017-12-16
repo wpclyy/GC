@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MForm));
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("未分类商品");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("全部数据", new System.Windows.Forms.TreeNode[] {
-            treeNode11});
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle30 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("未分类商品");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("全部数据", new System.Windows.Forms.TreeNode[] {
+            treeNode3});
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -60,12 +60,17 @@
             this.btnsuppsousou = new System.Windows.Forms.Button();
             this.txtsuppsousou = new System.Windows.Forms.TextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.btnproductprice = new System.Windows.Forms.Button();
             this.btnsave = new System.Windows.Forms.Button();
             this.btnview = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnproductprice = new System.Windows.Forms.Button();
+            this.lblpicindex = new System.Windows.Forms.Label();
+            this.btnnext = new System.Windows.Forms.Button();
+            this.btnprev = new System.Windows.Forms.Button();
+            this.txtgoods_sn = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             this.cmbbrand = new System.Windows.Forms.ComboBox();
             this.tvcat = new System.Windows.Forms.TreeView();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -89,7 +94,6 @@
             this.ckbnew = new System.Windows.Forms.CheckBox();
             this.ckbbest = new System.Windows.Forms.CheckBox();
             this.ckball = new System.Windows.Forms.CheckBox();
-            this.dataPage1 = new GCollection.DataPage();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.colcheck = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.xuhao = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -121,6 +125,7 @@
             this.bgwsupplier = new System.ComponentModel.BackgroundWorker();
             this.bgwrefreshgoods = new System.ComponentModel.BackgroundWorker();
             this.bgwupload = new System.ComponentModel.BackgroundWorker();
+            this.dataPage1 = new GCollection.DataPage();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -153,7 +158,7 @@
             this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1189, 27);
+            this.toolStrip1.Size = new System.Drawing.Size(1161, 27);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -234,7 +239,7 @@
             // 
             this.statusStrip1.Location = new System.Drawing.Point(0, 701);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1189, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1161, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -255,8 +260,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnview);
             this.splitContainer1.Panel2.Controls.Add(this.panel2);
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1189, 674);
-            this.splitContainer1.SplitterDistance = 240;
+            this.splitContainer1.Size = new System.Drawing.Size(1161, 674);
+            this.splitContainer1.SplitterDistance = 234;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControl1
@@ -267,7 +272,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(240, 674);
+            this.tabControl1.Size = new System.Drawing.Size(234, 674);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -278,7 +283,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(232, 648);
+            this.tabPage1.Size = new System.Drawing.Size(226, 648);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "商品分类";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -290,7 +295,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(113, 12);
             this.label4.TabIndex = 2;
-            this.label4.Text = "(刷新分类商品数量)";
+            this.label4.Text = "(刷新商品分类信息)";
             // 
             // btnrefreshcount
             // 
@@ -311,15 +316,15 @@
             this.treeView1.HideSelection = false;
             this.treeView1.Location = new System.Drawing.Point(3, 30);
             this.treeView1.Name = "treeView1";
-            treeNode11.Name = "节点1";
-            treeNode11.Tag = "0";
-            treeNode11.Text = "未分类商品";
-            treeNode12.Name = "节点0";
-            treeNode12.Tag = "0";
-            treeNode12.Text = "全部数据";
+            treeNode3.Name = "节点1";
+            treeNode3.Tag = "0";
+            treeNode3.Text = "未分类商品";
+            treeNode4.Name = "节点0";
+            treeNode4.Tag = "0";
+            treeNode4.Text = "全部数据";
             this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode12});
-            this.treeView1.Size = new System.Drawing.Size(226, 615);
+            treeNode4});
+            this.treeView1.Size = new System.Drawing.Size(220, 615);
             this.treeView1.TabIndex = 0;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -333,7 +338,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(232, 648);
+            this.tabPage2.Size = new System.Drawing.Size(226, 648);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "供应商";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -361,7 +366,7 @@
             // btnsuppsousou
             // 
             this.btnsuppsousou.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnsuppsousou.Location = new System.Drawing.Point(185, 7);
+            this.btnsuppsousou.Location = new System.Drawing.Point(179, 7);
             this.btnsuppsousou.Name = "btnsuppsousou";
             this.btnsuppsousou.Size = new System.Drawing.Size(44, 23);
             this.btnsuppsousou.TabIndex = 2;
@@ -376,7 +381,7 @@
             this.txtsuppsousou.ForeColor = System.Drawing.Color.Gainsboro;
             this.txtsuppsousou.Location = new System.Drawing.Point(3, 8);
             this.txtsuppsousou.Name = "txtsuppsousou";
-            this.txtsuppsousou.Size = new System.Drawing.Size(176, 21);
+            this.txtsuppsousou.Size = new System.Drawing.Size(170, 21);
             this.txtsuppsousou.TabIndex = 1;
             this.txtsuppsousou.Text = "请输入供应商名称";
             this.txtsuppsousou.Enter += new System.EventHandler(this.txtsuppsousou_Enter);
@@ -395,12 +400,23 @@
             this.listBox1.ItemHeight = 20;
             this.listBox1.Location = new System.Drawing.Point(3, 35);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(226, 564);
+            this.listBox1.Size = new System.Drawing.Size(220, 564);
             this.listBox1.TabIndex = 0;
             this.listBox1.ValueMember = "memberId";
             this.listBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listBox1_MouseClick);
             this.listBox1.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox1_DrawItem);
             this.listBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.listBox1_KeyPress);
+            // 
+            // btnproductprice
+            // 
+            this.btnproductprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnproductprice.Location = new System.Drawing.Point(598, 640);
+            this.btnproductprice.Name = "btnproductprice";
+            this.btnproductprice.Size = new System.Drawing.Size(89, 30);
+            this.btnproductprice.TabIndex = 22;
+            this.btnproductprice.Text = "设置货品价格";
+            this.btnproductprice.UseVisualStyleBackColor = true;
+            this.btnproductprice.Click += new System.EventHandler(this.btnproductprice_Click);
             // 
             // btnsave
             // 
@@ -433,7 +449,7 @@
             this.panel2.Controls.Add(this.tabControl2);
             this.panel2.Location = new System.Drawing.Point(3, 293);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(938, 331);
+            this.panel2.Size = new System.Drawing.Size(916, 331);
             this.panel2.TabIndex = 1;
             // 
             // tabControl2
@@ -444,12 +460,17 @@
             this.tabControl2.Location = new System.Drawing.Point(0, 0);
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(936, 329);
+            this.tabControl2.Size = new System.Drawing.Size(914, 329);
             this.tabControl2.TabIndex = 0;
             // 
             // tabPage3
             // 
             this.tabPage3.AutoScroll = true;
+            this.tabPage3.Controls.Add(this.lblpicindex);
+            this.tabPage3.Controls.Add(this.btnnext);
+            this.tabPage3.Controls.Add(this.btnprev);
+            this.tabPage3.Controls.Add(this.txtgoods_sn);
+            this.tabPage3.Controls.Add(this.label9);
             this.tabPage3.Controls.Add(this.cmbbrand);
             this.tabPage3.Controls.Add(this.tvcat);
             this.tabPage3.Controls.Add(this.pictureBox1);
@@ -467,36 +488,79 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(928, 303);
+            this.tabPage3.Size = new System.Drawing.Size(906, 303);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "通用信息";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // btnproductprice
+            // lblpicindex
             // 
-            this.btnproductprice.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnproductprice.Location = new System.Drawing.Point(598, 640);
-            this.btnproductprice.Name = "btnproductprice";
-            this.btnproductprice.Size = new System.Drawing.Size(89, 30);
-            this.btnproductprice.TabIndex = 22;
-            this.btnproductprice.Text = "设置货品价格";
-            this.btnproductprice.UseVisualStyleBackColor = true;
-            this.btnproductprice.Click += new System.EventHandler(this.btnproductprice_Click);
+            this.lblpicindex.AutoSize = true;
+            this.lblpicindex.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.lblpicindex.Location = new System.Drawing.Point(709, 276);
+            this.lblpicindex.Name = "lblpicindex";
+            this.lblpicindex.Size = new System.Drawing.Size(12, 12);
+            this.lblpicindex.TabIndex = 26;
+            this.lblpicindex.Text = "0";
+            // 
+            // btnnext
+            // 
+            this.btnnext.FlatAppearance.BorderSize = 0;
+            this.btnnext.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnnext.Location = new System.Drawing.Point(831, 133);
+            this.btnnext.Name = "btnnext";
+            this.btnnext.Size = new System.Drawing.Size(26, 30);
+            this.btnnext.TabIndex = 25;
+            this.btnnext.Text = "▶";
+            this.btnnext.UseVisualStyleBackColor = true;
+            this.btnnext.Click += new System.EventHandler(this.btnnext_Click);
+            // 
+            // btnprev
+            // 
+            this.btnprev.BackColor = System.Drawing.Color.Transparent;
+            this.btnprev.FlatAppearance.BorderSize = 0;
+            this.btnprev.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnprev.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnprev.Location = new System.Drawing.Point(574, 133);
+            this.btnprev.Name = "btnprev";
+            this.btnprev.Size = new System.Drawing.Size(26, 30);
+            this.btnprev.TabIndex = 24;
+            this.btnprev.Text = "◀";
+            this.btnprev.UseVisualStyleBackColor = false;
+            this.btnprev.Click += new System.EventHandler(this.btnprev_Click);
+            // 
+            // txtgoods_sn
+            // 
+            this.txtgoods_sn.Location = new System.Drawing.Point(89, 12);
+            this.txtgoods_sn.Name = "txtgoods_sn";
+            this.txtgoods_sn.ReadOnly = true;
+            this.txtgoods_sn.Size = new System.Drawing.Size(145, 21);
+            this.txtgoods_sn.TabIndex = 23;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(30, 15);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(53, 12);
+            this.label9.TabIndex = 22;
+            this.label9.Text = "商品货号";
             // 
             // cmbbrand
             // 
             this.cmbbrand.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbbrand.FormattingEnabled = true;
-            this.cmbbrand.Location = new System.Drawing.Point(89, 198);
+            this.cmbbrand.Location = new System.Drawing.Point(89, 237);
             this.cmbbrand.Name = "cmbbrand";
             this.cmbbrand.Size = new System.Drawing.Size(145, 20);
             this.cmbbrand.TabIndex = 21;
             // 
             // tvcat
             // 
-            this.tvcat.Location = new System.Drawing.Point(239, 157);
+            this.tvcat.HideSelection = false;
+            this.tvcat.Location = new System.Drawing.Point(239, 196);
             this.tvcat.Name = "tvcat";
-            this.tvcat.Size = new System.Drawing.Size(266, 137);
+            this.tvcat.Size = new System.Drawing.Size(222, 21);
             this.tvcat.TabIndex = 20;
             this.tvcat.Visible = false;
             this.tvcat.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvcat_NodeMouseClick);
@@ -504,6 +568,8 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.Color.White;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox1.Location = new System.Drawing.Point(573, 6);
             this.pictureBox1.Name = "pictureBox1";
@@ -511,10 +577,11 @@
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 18;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.BackgroundImageChanged += new System.EventHandler(this.pictureBox1_BackgroundImageChanged);
             // 
             // txtsellprice
             // 
-            this.txtsellprice.Location = new System.Drawing.Point(89, 79);
+            this.txtsellprice.Location = new System.Drawing.Point(89, 118);
             this.txtsellprice.Name = "txtsellprice";
             this.txtsellprice.Size = new System.Drawing.Size(145, 21);
             this.txtsellprice.TabIndex = 13;
@@ -522,7 +589,7 @@
             // 
             // txtgoodscate
             // 
-            this.txtgoodscate.Location = new System.Drawing.Point(89, 157);
+            this.txtgoodscate.Location = new System.Drawing.Point(89, 196);
             this.txtgoodscate.Name = "txtgoodscate";
             this.txtgoodscate.ReadOnly = true;
             this.txtgoodscate.Size = new System.Drawing.Size(145, 21);
@@ -532,7 +599,7 @@
             // 
             // txtjifenjiner
             // 
-            this.txtjifenjiner.Location = new System.Drawing.Point(89, 118);
+            this.txtjifenjiner.Location = new System.Drawing.Point(89, 157);
             this.txtjifenjiner.Name = "txtjifenjiner";
             this.txtjifenjiner.Size = new System.Drawing.Size(145, 21);
             this.txtjifenjiner.TabIndex = 11;
@@ -540,7 +607,7 @@
             // 
             // txtprice
             // 
-            this.txtprice.Location = new System.Drawing.Point(89, 42);
+            this.txtprice.Location = new System.Drawing.Point(89, 81);
             this.txtprice.Name = "txtprice";
             this.txtprice.Size = new System.Drawing.Size(145, 21);
             this.txtprice.TabIndex = 10;
@@ -549,7 +616,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(30, 201);
+            this.label8.Location = new System.Drawing.Point(30, 240);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(53, 12);
             this.label8.TabIndex = 8;
@@ -558,7 +625,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(30, 160);
+            this.label7.Location = new System.Drawing.Point(30, 199);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 12);
             this.label7.TabIndex = 7;
@@ -567,7 +634,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 121);
+            this.label6.Location = new System.Drawing.Point(6, 160);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 12);
             this.label6.TabIndex = 6;
@@ -576,7 +643,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(30, 82);
+            this.label3.Location = new System.Drawing.Point(30, 121);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 12);
             this.label3.TabIndex = 3;
@@ -585,7 +652,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(30, 48);
+            this.label2.Location = new System.Drawing.Point(30, 87);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 2;
@@ -593,7 +660,7 @@
             // 
             // txtgoodstitle
             // 
-            this.txtgoodstitle.Location = new System.Drawing.Point(89, 6);
+            this.txtgoodstitle.Location = new System.Drawing.Point(89, 45);
             this.txtgoodstitle.Name = "txtgoodstitle";
             this.txtgoodstitle.Size = new System.Drawing.Size(416, 21);
             this.txtgoodstitle.TabIndex = 1;
@@ -601,7 +668,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(30, 9);
+            this.label1.Location = new System.Drawing.Point(30, 48);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 0;
@@ -613,7 +680,7 @@
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(928, 303);
+            this.tabPage4.Size = new System.Drawing.Size(906, 303);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "商品描述";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -624,7 +691,7 @@
             this.webBrowser1.Location = new System.Drawing.Point(3, 3);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(922, 297);
+            this.webBrowser1.Size = new System.Drawing.Size(900, 297);
             this.webBrowser1.TabIndex = 1;
             this.webBrowser1.Resize += new System.EventHandler(this.webBrowser1_Resize);
             // 
@@ -645,7 +712,7 @@
             this.panel1.Controls.Add(this.dataGridView1);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(939, 286);
+            this.panel1.Size = new System.Drawing.Size(917, 286);
             this.panel1.TabIndex = 0;
             // 
             // ckbshipping
@@ -721,41 +788,26 @@
             this.ckball.UseVisualStyleBackColor = false;
             this.ckball.CheckedChanged += new System.EventHandler(this.ckball_CheckedChanged);
             // 
-            // dataPage1
-            // 
-            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.dataPage1.CurrentPage = 1;
-            this.dataPage1.Location = new System.Drawing.Point(1, 249);
-            this.dataPage1.Name = "dataPage1";
-            this.dataPage1.PageCount = 0;
-            this.dataPage1.PageSize = 10;
-            this.dataPage1.Size = new System.Drawing.Size(935, 31);
-            this.dataPage1.TabIndex = 1;
-            this.dataPage1.TotalCount = 0;
-            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
-            // 
             // dataGridView1
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeRows = false;
-            dataGridViewCellStyle26.BackColor = System.Drawing.SystemColors.Control;
-            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle6;
             this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle27.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle27.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle27.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle27.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle27.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle27.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle27.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colcheck,
@@ -780,29 +832,29 @@
             this.goods_thumb,
             this.goods_desc,
             this.integral});
-            dataGridViewCellStyle29.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle29.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle29.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle29.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle29.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle29.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle29;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView1.Location = new System.Drawing.Point(2, 1);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
-            dataGridViewCellStyle30.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle30.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle30.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle30.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle30.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle30.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle30.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle30;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dataGridView1.RowHeadersDefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(937, 244);
+            this.dataGridView1.Size = new System.Drawing.Size(915, 244);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseDoubleClick);
             this.dataGridView1.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridView1_CurrentCellDirtyStateChanged);
@@ -838,18 +890,18 @@
             // 
             this.goods_sn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.goods_sn.DataPropertyName = "goods_sn";
-            this.goods_sn.HeaderText = "货号";
+            this.goods_sn.HeaderText = "商品货号";
             this.goods_sn.Name = "goods_sn";
             this.goods_sn.ReadOnly = true;
             this.goods_sn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.goods_sn.Width = 35;
+            this.goods_sn.Width = 59;
             // 
             // goods_name
             // 
             this.goods_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.goods_name.DataPropertyName = "goods_name";
-            dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.goods_name.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.goods_name.DefaultCellStyle = dataGridViewCellStyle8;
             this.goods_name.HeaderText = "商品名称";
             this.goods_name.Name = "goods_name";
             this.goods_name.ReadOnly = true;
@@ -1063,12 +1115,27 @@
             this.bgwupload.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwupload_DoWork);
             this.bgwupload.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwupload_RunWorkerCompleted);
             // 
+            // dataPage1
+            // 
+            this.dataPage1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataPage1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.dataPage1.CurrentPage = 1;
+            this.dataPage1.Location = new System.Drawing.Point(1, 249);
+            this.dataPage1.Name = "dataPage1";
+            this.dataPage1.PageCount = 0;
+            this.dataPage1.PageSize = 10;
+            this.dataPage1.Size = new System.Drawing.Size(913, 31);
+            this.dataPage1.TabIndex = 1;
+            this.dataPage1.TotalCount = 0;
+            this.dataPage1.EventPaging += new GCollection.DataPage.EventPagingHandler(this.dataPage1_EventPaging);
+            // 
             // MForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1189, 723);
+            this.ClientSize = new System.Drawing.Size(1161, 723);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -1168,6 +1235,10 @@
         private System.ComponentModel.BackgroundWorker bgwupload;
         private System.Windows.Forms.Label lblsuppliercount;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtgoods_sn;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button btnnext;
+        private System.Windows.Forms.Button btnprev;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colcheck;
         private System.Windows.Forms.DataGridViewTextBoxColumn xuhao;
         private System.Windows.Forms.DataGridViewTextBoxColumn status;
@@ -1190,5 +1261,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_thumb;
         private System.Windows.Forms.DataGridViewTextBoxColumn goods_desc;
         private System.Windows.Forms.DataGridViewTextBoxColumn integral;
+        private System.Windows.Forms.Label lblpicindex;
     }
 }

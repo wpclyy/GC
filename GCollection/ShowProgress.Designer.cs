@@ -36,16 +36,17 @@
             this.lbltip2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lbltitle = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // progressBar1
             // 
             this.progressBar1.BackColor = System.Drawing.Color.BlanchedAlmond;
-            this.progressBar1.Location = new System.Drawing.Point(4, 28);
+            this.progressBar1.Location = new System.Drawing.Point(3, 29);
             this.progressBar1.MarqueeAnimationSpeed = 25;
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(400, 25);
+            this.progressBar1.Size = new System.Drawing.Size(404, 21);
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar1.TabIndex = 0;
             // 
@@ -54,7 +55,7 @@
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Bisque;
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(87, 60);
+            this.label1.Location = new System.Drawing.Point(84, 57);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(17, 12);
             this.label1.TabIndex = 1;
@@ -62,7 +63,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(347, 93);
+            this.button1.Location = new System.Drawing.Point(347, 108);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(57, 26);
             this.button1.TabIndex = 2;
@@ -75,7 +76,7 @@
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.Bisque;
             this.label2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label2.Location = new System.Drawing.Point(87, 86);
+            this.label2.Location = new System.Drawing.Point(84, 82);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(17, 12);
             this.label2.TabIndex = 3;
@@ -86,7 +87,7 @@
             this.lbltip1.AutoSize = true;
             this.lbltip1.BackColor = System.Drawing.Color.Bisque;
             this.lbltip1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lbltip1.Location = new System.Drawing.Point(6, 60);
+            this.lbltip1.Location = new System.Drawing.Point(3, 57);
             this.lbltip1.Name = "lbltip1";
             this.lbltip1.Size = new System.Drawing.Size(53, 12);
             this.lbltip1.TabIndex = 4;
@@ -97,7 +98,7 @@
             this.lbltip2.AutoSize = true;
             this.lbltip2.BackColor = System.Drawing.Color.Bisque;
             this.lbltip2.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.lbltip2.Location = new System.Drawing.Point(6, 86);
+            this.lbltip2.Location = new System.Drawing.Point(3, 82);
             this.lbltip2.Name = "lbltip2";
             this.lbltip2.Size = new System.Drawing.Size(53, 12);
             this.lbltip2.TabIndex = 5;
@@ -107,6 +108,7 @@
             // 
             this.panel1.BackColor = System.Drawing.Color.Bisque;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.lbltitle);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.lbltip2);
@@ -114,9 +116,9 @@
             this.panel1.Controls.Add(this.lbltip1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(2, 2);
+            this.panel1.Location = new System.Drawing.Point(1, 1);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(411, 128);
+            this.panel1.Size = new System.Drawing.Size(413, 140);
             this.panel1.TabIndex = 6;
             // 
             // lbltitle
@@ -128,12 +130,20 @@
             this.lbltitle.TabIndex = 6;
             this.lbltitle.Text = "title";
             // 
+            // label3
+            // 
+            this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label3.Location = new System.Drawing.Point(-1, 102);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(413, 1);
+            this.label3.TabIndex = 7;
+            // 
             // ShowProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Gray;
-            this.ClientSize = new System.Drawing.Size(415, 132);
+            this.ClientSize = new System.Drawing.Size(415, 142);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ShowProgress";
@@ -158,5 +168,6 @@
         private System.Windows.Forms.Label lbltip2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lbltitle;
+        private System.Windows.Forms.Label label3;
     }
 }

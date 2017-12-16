@@ -22,22 +22,19 @@ namespace GCollection
         /// </summary>
         DataTable dtcate = new DataTable();
 
-        SpockLogic_r spr = null;
+        Opergcc op = new Opergcc();
 
         Dictionary<string, Control> diccontrl = new Dictionary<string, Control>();
         Dictionary<string, Control> diccontrlq = new Dictionary<string, Control>();
 
-        public FormBatch()
-        {
-            InitializeComponent();
-        }
 
-        public FormBatch (DataTable dt1,DataTable dt2,SpockLogic_r sp)
+        public FormBatch ()
         {
             InitializeComponent();
-            spr = sp;
-            dtbrand = dt1;
-            dtcate = dt2;
+            DataSet ds = op.Querydscbrand();
+            dtbrand = ds.Tables[0];
+            DataSet ds1 = op.Querydsccate();
+            dtcate = ds1.Tables[0];
             showbrand();
             showcatedsc();
         }
@@ -57,39 +54,44 @@ namespace GCollection
         }
 
         /// <summary>
-        /// 显示购低网商品分类树
+        /// 显示购低网分类树
         /// </summary>
         public void showcatedsc()
         {
-            foreach (DataRow row in dtcate.Rows)
-            {
-                if (row["parent_id"].ToString() == "0")
-                {
-                    Application.DoEvents();
-                    TreeNode pnode = new TreeNode();
-                    pnode.Text = row["cat_name"].ToString();
-                    pnode.Tag = row["cat_id"].ToString();
-                    tvcat.Nodes.Add(pnode);
-                    string catid = pnode.Tag.ToString();
-                    AddChildnode_dsc(catid, pnode, dtcate);
-                    TreeNode tt=(TreeNode) pnode.Clone();
-                    treeView1.Nodes.Add(tt);
-                }
-            }
+            AddChildrenCateDsc("0", null);
         }
 
-        public void AddChildnode_dsc(string pid, TreeNode pnode, DataTable dt)
+        /// <summary>
+        /// 嵌套加载购低网树节点
+        /// </summary>
+        /// <param name="parentid"></param>
+        /// <param name="pnode"></param>
+        public void AddChildrenCateDsc(string parentid, TreeNode pnode)
         {
-            foreach (DataRow row in dt.Rows)
+            DataRow[] dr = dtcate.Select("parent_id='" + parentid + "'");
+            if (dr == null || dr.Length < 1)
             {
-                if (row["parent_id"].ToString() == pid)
+                return;
+            }
+            for (int i = 0; i < dr.Length; i++)
+            {
+                TreeNode cnode = new TreeNode();
+                cnode.Text = dr[i]["cat_name"].ToString();
+                cnode.Tag = dr[i]["cat_id"].ToString();
+                if (pnode == null)
                 {
-                    TreeNode cnode = new TreeNode();
-                    cnode.Text = row["cat_name"].ToString();
-                    cnode.Tag = row["cat_id"].ToString();
+                    tvcat.Nodes.Add(cnode);
+                }
+                else
+                {
                     pnode.Nodes.Add(cnode);
-                    string catid = cnode.Tag.ToString();
-                    AddChildnode_dsc(catid, cnode, dt);
+                }
+                string catid = dr[i]["cat_id"].ToString();
+                AddChildrenCateDsc(catid, cnode);
+                if (pnode == null)
+                {
+                    TreeNode tt = (TreeNode)cnode.Clone();
+                    treeView1.Nodes.Add(tt);
                 }
             }
         }
@@ -292,7 +294,7 @@ namespace GCollection
                         if (string.Empty != goods_sn)
                         {
                             goods_sn = goods_sn.TrimEnd(',');
-                            bool b = spr.opgcc.UpdateProducts(conditions, goods_sn);
+                            bool b = op.UpdateProducts(conditions, goods_sn);
                             if (b)
                             {
                                 MessageBox.Show("批量修改成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -745,7 +747,7 @@ namespace GCollection
             if (string.Empty != conditions)
             {
                 conditions = conditions.TrimEnd(new char[] { 'a', 'n', 'd', ' ' });
-                DataTable dt = spr.opgcc.QueryConditionGoods(conditions);
+                DataTable dt = op.QueryConditionGoods(conditions);
                 return dt;
             }
             return null;

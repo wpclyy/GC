@@ -37,9 +37,7 @@ public   class SpockLogic_r
         /// <summary>
         /// 本地数据库链接字符串
         /// </summary>
-        //  string str = "server=127.0.0.1;user id=root;password=123456;database=gcl";
-       // string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
-        string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
+        string str = Config.Connection;
 
         public Opergcc opgcc = null;
          

@@ -34,41 +34,31 @@ namespace GCollection
         Dictionary<int, TreeNode> catetreenodedata = new Dictionary<int, TreeNode>();
 
         /// <summary>
-        /// 业务操作类
+        /// 分类关联集合(1688分类ID ,购低网分类ID)
         /// </summary>
-        SpockLogic_r spr = null;
+        public Dictionary<string, int> dicrelcate = new Dictionary<string, int>();
+
+
+        Opergcc op = new Opergcc();
 
         /// <summary>
         /// 窗体关闭标识
         /// </summary>
         string closing ="0";
 
-        public Relcate(SpockLogic_r sr)
+        public Relcate()
         {
             InitializeComponent();
-            spr = sr;
             lblp1.Text = "";
             lblp2.Text = "";
-        }
-
-        private void Relcate_Load(object sender, EventArgs e)
-        {
-
         }
 
         /// <summary>
         /// 加载分类
         /// </summary>
-        /// <param name="dt_ali"></param>
-        /// <param name="dt_dsc"></param>
-        /// <param name="diccateidname"></param>
-        /// <param name="diccateidnode"></param>
-        public void Loaderdata(DataTable dt_ali ,DataTable dt_dsc,Dictionary<string  ,string > diccateidname)
+        public void Loaderdata()
         {
-            dtdsc = dt_dsc;
-            dtali = dt_ali;
-            diccate = diccateidname;
-            backgroundWorker1.RunWorkerAsync();
+             backgroundWorker1.RunWorkerAsync();
         }
 
         #region 加载商品分类
@@ -78,40 +68,94 @@ namespace GCollection
         /// </summary>
         public void showcatedsc()
         {
-            foreach (DataRow row in dtdsc.Rows)
-            {
-                if (row["parent_id"].ToString() == "0")
-                {
-                    Application.DoEvents();
-                    TreeNode pnode = new TreeNode();
-                    pnode.Text = row["cat_name"].ToString();
-                    pnode.Tag = row["cat_id"].ToString();
-                    treeView2.Nodes.Add(pnode);
-                    string catid = pnode.Tag.ToString();
-                    AddChildnode_dsc(catid, pnode);
-                }
-            }
+            AddChildrenCateDsc("0", null);
         }
 
         /// <summary>
         /// 嵌套加载购低网树节点
         /// </summary>
-        /// <param name="pid"></param>
+        /// <param name="parentid"></param>
         /// <param name="pnode"></param>
-        public void AddChildnode_dsc(string pid, TreeNode pnode)
+        public void AddChildrenCateDsc(string parentid, TreeNode pnode)
         {
-            catetreenodedata.Add(Convert.ToInt32(pnode.Tag), pnode);
-            foreach (DataRow row in dtdsc.Rows)
+            if (closing == "1")
             {
-                if (row["parent_id"].ToString() == pid)
+                return;
+            }
+            DataRow[] dr = dtdsc.Select("parent_id='" + parentid + "'");
+            if (dr == null || dr.Length < 1)
+            {
+                return;
+            }
+            for (int i = 0; i < dr.Length; i++)
+            {
+                if (closing == "1")
                 {
-                    TreeNode cnode = new TreeNode();
-                    cnode.Text = row["cat_name"].ToString();
-                    cnode.Tag = row["cat_id"].ToString();
-                    pnode.Nodes.Add(cnode);
-                    string catid = cnode.Tag.ToString();
-                    AddChildnode_dsc(catid, cnode);
+                    return;
                 }
+                TreeNode cnode = new TreeNode();
+                cnode.Text = dr[i]["cat_name"].ToString();
+                cnode.Tag = dr[i]["cat_id"].ToString();
+                if (pnode == null)
+                {
+                    treeView2.Nodes.Add(cnode);
+                }
+                else
+                {
+                    pnode.Nodes.Add(cnode);
+                }
+                if (!diccate.Keys.Contains(cnode.Tag.ToString()))
+                {
+                    diccate.Add(cnode.Tag.ToString(), cnode.Text);
+                }
+                if (!catetreenodedata.Keys.Contains(Convert.ToInt32(cnode.Tag)))
+                {
+                    catetreenodedata.Add(Convert.ToInt32(cnode.Tag), cnode);
+                }
+                string catid = dr[i]["cat_id"].ToString();
+                AddChildrenCateDsc(catid, cnode);
+            }
+        }
+
+        /// <summary>
+        /// 嵌套加载1688树节点
+        /// </summary>
+        /// <param name="parentid"></param>
+        /// <param name="pnode"></param>
+        public void AddChildrenCateAli(string parentid,TreeNode pnode)
+        {
+            if (closing == "1")
+            {
+                return;
+            }
+            DataRow[] dr = dtali.Select("parentIDs='"+ parentid + "'");
+            if (dr == null || dr.Length < 1)
+            {
+                return;
+            }
+            for (int i = 0; i < dr.Length; i++)
+            {
+                if (closing == "1")
+                {
+                    return;
+                }
+                TreeNode cnode = new TreeNode();
+                cnode.Text = dr[i]["catname"].ToString();
+                cnode.Tag = dr[i]["catid"].ToString();
+                if (pnode == null)
+                {
+                    treeView1.Nodes.Add(cnode);
+                }
+                else
+                {
+                    pnode.Nodes.Add(cnode);
+                }
+                if (dicrelcate.ContainsKey(cnode.Tag.ToString()) && dicrelcate[cnode.Tag.ToString()] != 0)
+                {
+                    cnode.BackColor = Color.Red;
+                }
+                string catid = dr[i]["catid"].ToString();
+                AddChildrenCateAli(catid, cnode);
             }
         }
 
@@ -120,52 +164,7 @@ namespace GCollection
         /// </summary>
         public void showcateali()
         {
-            foreach (DataRow row in dtali.Rows)
-            {
-                if (closing == "1")
-                {
-                    return;
-                }
-                if (row["parentIDs"].ToString() == "0")
-                {
-                    Application.DoEvents();
-                    TreeNode pnode = new TreeNode();
-                    pnode.Text = row["catname"].ToString();
-                    pnode.Tag = row["catid"].ToString();
-                    treeView1.Nodes.Add(pnode);
-                    string catid = pnode.Tag.ToString();
-                    AddChildnode_ali(catid, pnode);
-                }
-            }
-        }
-
-        /// <summary>
-        /// 嵌套加载1688分类树节点
-        /// </summary>
-        /// <param name="pid"></param>
-        /// <param name="pnode"></param>
-        public void AddChildnode_ali(string pid, TreeNode pnode)
-        {
-            foreach (DataRow row in dtali.Rows)
-            {
-                if (closing == "1")
-                {
-                    return;
-                }
-                if (row["parentIDs"].ToString() == pid)
-                {
-                    TreeNode cnode = new TreeNode();
-                    cnode.Text = row["catname"].ToString();
-                    cnode.Tag = row["catid"].ToString();
-                    pnode.Nodes.Add(cnode);
-                    if (spr.diccate.ContainsKey(cnode.Tag.ToString()) && spr.diccate[cnode.Tag.ToString()] != 0)
-                    {
-                        cnode.BackColor = Color.Red;
-                    }
-                    string catid = cnode.Tag.ToString();
-                    AddChildnode_ali(catid, cnode);
-                }
-            }
+              AddChildrenCateAli("0", null);
         }
 
         /// <summary>
@@ -175,7 +174,26 @@ namespace GCollection
         /// <param name="e"></param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            
+            DataSet ds2 = op.querycate();
+            dtali = ds2.Tables[0];
+            DataSet ds1 = op.Querydsccate();
+            dtdsc = ds1.Tables[0];
+            foreach (DataRow dr in ds2.Tables[0].Rows)
+            {
+                int gcatid = 0;
+                if (dr["gcatid"].ToString() != "" && dr["gcatid"] != null)
+                {
+                    gcatid = Convert.ToInt32(dr["gcatid"]);
+                }
+                if (dicrelcate.Keys.Contains(dr["catid"].ToString()))
+                {
+                    dicrelcate[dr["catid"].ToString()] = gcatid;
+                }
+                else
+                {
+                    dicrelcate.Add(dr["catid"].ToString(), gcatid);
+                }
+            }
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -200,10 +218,17 @@ namespace GCollection
 
             if (c1 != "" && c2 != "" && s2 != "")
             {
-                int c = spr.opgcc.Relcate(c1, c2, s2);
+                int c = op.Relcate(c1, c2, s2);
                 if (c > 0)
                 {
-                    spr.Loadrelcate();
+                    if (dicrelcate.Keys.Contains(c1))
+                    {
+                        dicrelcate[c1] = Convert.ToInt32(c2);
+                    }
+                    else
+                    {
+                        dicrelcate.Add(c1, Convert.ToInt32(c2));
+                    }
                     huaxian(Color.Red);
                     if (treeView1.SelectedNode != null)
                     {
@@ -266,8 +291,8 @@ namespace GCollection
             if (e.Node.GetNodeCount(true) < 1)
              {
                 treeView1.SelectedNode = e.Node;
-                  textBox1.Text = e.Node.Text;
-                 textBox1.Tag = e.Node.Tag;
+                textBox1.Text = e.Node.Text;
+                textBox1.Tag = e.Node.Tag;
                 string s1 = GetParentNodeInfo(e.Node);
                 string[] sarr1 = s1.Split(new char[3] { '-', '-', '>' });
                 string st1 = "";
@@ -279,9 +304,9 @@ namespace GCollection
                     }
                 }
                 lblp1.Text = st1.TrimEnd('/');
-                if (spr.diccate.ContainsKey(textBox1.Tag.ToString()))
+                if (dicrelcate.ContainsKey(textBox1.Tag.ToString()))
                 {
-                    int s = spr.diccate[textBox1.Tag.ToString()];
+                    int s = dicrelcate[textBox1.Tag.ToString()];
                     if (s == 0)
                     {
                         //没有关联分类
@@ -372,7 +397,7 @@ namespace GCollection
 
         private void Relcate_FormClosing(object sender, FormClosingEventArgs e)
         {
-            closing = "1";
+           closing = "1";
         }
 
         private void btnclose_Click(object sender, EventArgs e)

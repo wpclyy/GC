@@ -156,14 +156,15 @@ namespace dscapi.gdsdk
 
             Console.WriteLine("插入商品基本信息");
             //插入图片
-
             Image img = new Image();
             img.setid(goods_id);
 
             Stream s = null;
             using (HttpClientClass hc = new HttpClientClass())
             {
-                s = hc.htmlimg(alistr + imglist[0]);
+                s = null;
+                string sss = imglist[0];
+                s = hc.htmlimg(alistr + sss);
             }
             string result = instance.sendimg<string>(new UploadParameterType { UploadStream = s, FileNameValue = "goudiw.jpg" }, img);
             JObject im = (JObject)JsonConvert.DeserializeObject(result);
@@ -181,21 +182,24 @@ namespace dscapi.gdsdk
             string gdobj = instance.send<string>(gu);
             JObject upgd = (JObject)JsonConvert.DeserializeObject(gdobj);
             Console.WriteLine("更新封面图片\r\n");
+
+            Stream s1 = null;
             for (int g = 1; g < imglist.Count; g++)
             {
-                s = null;
+                s1 = null;
                 using (HttpClientClass hc = new HttpClientClass())
                 {
-                    s = hc.htmlimg(alistr + imglist[g]);
+                    s1 = hc.htmlimg(alistr + imglist[g]);
                 }
-                result = instance.sendimg<string>(new UploadParameterType { UploadStream = s, FileNameValue = "goudiw.jpg" }, img);
-                im = (JObject)JsonConvert.DeserializeObject(result);
-                if (im["error"].ToString() == "0")
+                string result1 = instance.sendimg<string>(new UploadParameterType { UploadStream = s1, FileNameValue = "goudiw.jpg" }, img);
+                JObject im1 = (JObject)JsonConvert.DeserializeObject(result1);
+                if (im1["error"].ToString() == "0")
                 {
-                    uploadimg.Add(imglist[g], im);
+                    uploadimg.Add(imglist[g], im1);
                 }
             }
             Console.WriteLine("上传相册图片\r\n");
+
             //更新商品详情
             gu = new Goodupdate(goods_id.ToString());
             //解析阿里巴巴商品详情信息，获取其中图片

@@ -9,6 +9,7 @@ namespace GCollection
     static class Program
     {
        public  static string mfloadflag="";
+        public static MForm mf = null;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>

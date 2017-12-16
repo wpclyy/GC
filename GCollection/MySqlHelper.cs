@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GCollection
 {
@@ -37,14 +38,21 @@ namespace GCollection
         /// <returns>Returns a value that means number of rows affected/returns>
         public static int ExecuteNonQuery(string connectionString, CommandType cmdType, string cmdText, params MySqlParameter[] commandParameters)
         {
-            MySqlCommand cmd = new MySqlCommand();
-
-            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            try
             {
-                PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters);
-                int val = cmd.ExecuteNonQuery();
-                cmd.Parameters.Clear();
-                return val;
+                MySqlCommand cmd = new MySqlCommand();
+
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters);
+                    int val = cmd.ExecuteNonQuery();
+                    cmd.Parameters.Clear();
+                    return val;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 
@@ -160,25 +168,40 @@ namespace GCollection
         /// <returns>a value in object type</returns>
         public static object ExecuteScalar(string connectionString, CommandType cmdType, string cmdText, params MySqlParameter[] commandParameters)
         {
-            MySqlCommand cmd = new MySqlCommand();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                PrepareCommand(cmd, connection, null, cmdType, cmdText, commandParameters);
-                object val = cmd.ExecuteScalar();
-                cmd.Parameters.Clear();
-                return val;
+                MySqlCommand cmd = new MySqlCommand();
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    PrepareCommand(cmd, connection, null, cmdType, cmdText, commandParameters);
+                    object val = cmd.ExecuteScalar();
+                    cmd.Parameters.Clear();
+                    return val;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
 
         public static DataSet GetDataSet(string connectionString, string cmdText, params MySqlParameter[] commandParameters)
         {
-            DataSet retSet = new DataSet();
-            using (MySqlDataAdapter msda = new MySqlDataAdapter(cmdText, connectionString))
+            try
             {
-                msda.Fill(retSet);
+                DataSet retSet = new DataSet();
+                using (MySqlDataAdapter msda = new MySqlDataAdapter(cmdText, connectionString))
+                {
+                    msda.Fill(retSet);
+                }
+                return retSet;
             }
-            return retSet;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>
@@ -224,26 +247,35 @@ namespace GCollection
         /// <param name="cmdParms">return the command that has parameters</param>
         private static void PrepareCommand(MySqlCommand cmd, MySqlConnection conn, MySqlTransaction trans, CommandType cmdType, string cmdText, MySqlParameter[] cmdParms)
         {
-            if (conn.State != ConnectionState.Open)
+            try
             {
-                conn.Open();
-            }
-
-            cmd.Connection = conn;
-            cmd.CommandText = cmdText;
-
-            if (trans != null)
-            {
-                cmd.Transaction = trans;
-            }
-            cmd.CommandType = cmdType;
-
-            if (cmdParms != null)
-            {
-                foreach (MySqlParameter parm in cmdParms)
+                if (conn.State != ConnectionState.Open)
                 {
-                    cmd.Parameters.Add(parm);
+                    conn.Open();
                 }
+
+                cmd.Connection = conn;
+                cmd.CommandText = cmdText;
+
+                if (trans != null)
+                {
+                    cmd.Transaction = trans;
+                }
+                cmd.CommandType = cmdType;
+
+                if (cmdParms != null)
+                {
+                    foreach (MySqlParameter parm in cmdParms)
+                    {
+                        cmd.Parameters.Add(parm);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
             }
         }
         #region parameters
@@ -395,33 +427,40 @@ namespace GCollection
         /// <returns>execute trascation result(success: true | fail: false)</returns>
         public static bool ExecuteTransaction(string connectionString, CommandType cmdType, string[] cmdTexts, params MySqlParameter[][] commandParameters)
         {
-            MySqlConnection myConnection = new MySqlConnection(connectionString);       //get the connection object
-            myConnection.Open();                                                        //open the connection
-            MySqlTransaction myTrans = myConnection.BeginTransaction();                 //begin a trascation
-            MySqlCommand cmd = new MySqlCommand();
-            cmd.Connection = myConnection;
-            cmd.Transaction = myTrans;
-
             try
             {
-                for (int i = 0; i < cmdTexts.Length; i++)
+                MySqlConnection myConnection = new MySqlConnection(connectionString);       //get the connection object
+                myConnection.Open();                                                        //open the connection
+                MySqlTransaction myTrans = myConnection.BeginTransaction();                 //begin a trascation
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = myConnection;
+                cmd.Transaction = myTrans;
+
+                try
                 {
-                    PrepareCommand(cmd, myConnection, null, cmdType, cmdTexts[i], commandParameters[i]);
-                    cmd.ExecuteNonQuery();
-                    cmd.Parameters.Clear();
+                    for (int i = 0; i < cmdTexts.Length; i++)
+                    {
+                        PrepareCommand(cmd, myConnection, null, cmdType, cmdTexts[i], commandParameters[i]);
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+                    }
+                    myTrans.Commit();
                 }
-                myTrans.Commit();
+                catch (Exception ex)
+                {
+                    myTrans.Rollback();
+                    return false;
+                }
+                finally
+                {
+                    myConnection.Close();
+                }
+                return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                myTrans.Rollback();
-                return false;
+                throw ex;
             }
-            finally
-            {
-                myConnection.Close();
-            }
-            return true;
         }
         #endregion
 

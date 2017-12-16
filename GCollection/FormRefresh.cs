@@ -59,6 +59,7 @@ namespace GCollection
             if (bgw != null)
             {
                 bgw.CancelAsync();
+                button1.Text = "取消中...";
             }
         }
     }

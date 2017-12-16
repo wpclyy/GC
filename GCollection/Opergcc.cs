@@ -13,8 +13,7 @@ namespace GCollection
         /// <summary>
         /// 本地数据库链接字符串
         /// </summary>
-        string str = "server=192.168.2.88;user id=Fany;password=wang198912;database=gcollection";
-       // string str = "server=47.92.113.67;user id=Fany;password=T5oxErqC7ihn7s4M;database=gcollection";
+        string str = Config.Connection;
 
         /// <summary>
         /// 购低网数据库链接字符串
@@ -68,7 +67,14 @@ namespace GCollection
             totalcount = 0;
             DataSet dss = MySqlHelper.GetDataSet(str, "select  count(*) as totalcount from goods b  where b.cat_id='" + catid + "'");
             totalcount = int.Parse(dss.Tables[0].Rows[0]["totalcount"].ToString());
-            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id, '' as brand_name, c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where c.cat_id='" + catid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
+
+            string sql = "SELECT c.goods_id , CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name," +
+                "c.cat_id,c.brand_id,'' as brand_name, c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new," +
+                "c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname,a.catId as catid" +
+                " FROM goods c JOIN(select goods_id from goods WHERE cat_id = "+catid+" limit " + ((currentpage - 1) * pagesize) + ", "+ pagesize + ")cc on c.goods_id = cc.goods_id " +
+                "join productinfo a on c.goods_sn = a.productID " +
+                "join category b on a.catId = b.catid";
+
             DataSet retSet = new DataSet();
             retSet = MySqlHelper.GetDataSet(str, sql);
             return retSet;
@@ -87,7 +93,15 @@ namespace GCollection
             totalcount = 0;
             DataSet dss = MySqlHelper.GetDataSet(str, "select  count(*) as totalcount from productinfo a  left join goods b on a.productID=b.goods_sn where a.memberid='" + memberid + "'");
             totalcount = int.Parse(dss.Tables[0].Rows[0]["totalcount"].ToString());
-            string sql = "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id, '' as brand_name,c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname ,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where a.memberid='" + memberid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
+            string sql =  "select CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name,c.cat_id,c.brand_id, '' as brand_name,c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new,c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname ,a.catId as catid from productinfo  a left join category b on a.catId=b.catid left join goods c on a.productID=c.goods_sn  where a.memberid='" + memberid + "' limit " + ((currentpage - 1) * pagesize) + "," + pagesize;
+
+            sql= "SELECT c.goods_id , CASE c.status WHEN 1 THEN '已上传' ELSE '未上传' END as status,c.goods_sn,c.goods_name," +
+      "c.cat_id,c.brand_id,'' as brand_name, c.goods_number,c.goods_weight,c.market_price,c.shop_price,c.is_best,c.is_new," +
+      "c.is_hot,c.is_shipping,c.is_on_sale,c.goods_thumb,c.goods_desc,c.integral,b.catname,a.catId as catid" +
+      " FROM productinfo a JOIN(select id from productinfo WHERE memberid = '" + memberid + "' limit " + ((currentpage - 1) * pagesize) + ", " + pagesize + ")aa on a.id = aa.id " +
+      "join goods c on a.productID = c.goods_sn " +
+      "join category b on a.catId = b.catid";
+
             DataSet retSet = new DataSet();
             retSet = MySqlHelper.GetDataSet(str, sql);
             return retSet;
@@ -200,8 +214,7 @@ namespace GCollection
         public int Relcate(string catid, string gcatid, string gcatname)
         {
             string sqlrelcate = "update category set gcatid='" + gcatid + "',gcatname='" + gcatname + "'  where catid='" + catid + "'";
-            string sqlcatgoods = "select productID from productinfo where catId='" + catid + "'";
-            string sqlr = "update goods set cat_id=" + gcatid + " where goods_sn in (" + sqlcatgoods + ")";
+            string sqlr = "update goods a inner join productinfo b on a.goods_sn=b.productID set a.cat_id="+ gcatid + "  where b.catId='"+catid+"'"; 
 
             string[] sql = new string[2];
             sql[0] = sqlrelcate;
@@ -316,10 +329,27 @@ namespace GCollection
         /// <returns></returns>
         public int UpdateSupplierGoodscount(string memberid)
         {
-            string sql1 = "select  count(*)  from productinfo where memberid='" + memberid + "'";
-            string sql2 = "update supplier set goods_count=("+sql1+")  where MemberId='" + memberid + "'";
-            int c = MySqlHelper.ExecuteNonQuery(str, CommandType.Text, sql2);
-            return c;
+            string sql1 = "select  a.goods_count,count  from supplier a inner join   (select  count(*) as count ,memberid as mid from productinfo where memberid='" + memberid + "')b on a.MemberId=b.mid ";
+            DataSet ds1 = MySqlHelper.GetDataSet(str, sql1);
+            if (ds1.Tables[0] != null && ds1.Tables[0].Rows.Count > 0)
+            {
+                int goodscount = Convert.ToInt32(ds1.Tables[0].Rows[0]["goods_count"]);
+                int count = Convert.ToInt32(ds1.Tables[0].Rows[0]["count"]);
+                if (goodscount - count == 0)
+                {
+                    return 1;
+                }
+                else
+                {
+                    string sql2 = "update supplier set goods_count=(" + count.ToString () + ")  where MemberId='" + memberid + "'";
+                    int c = MySqlHelper.ExecuteNonQuery(str, CommandType.Text, sql2);
+                    return c;
+                }
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }
